@@ -1,4 +1,4 @@
-package a2id40.thermostatapp.fragments.daynight;
+package a2id40.thermostatapp.fragments.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,22 +14,21 @@ import butterknife.ButterKnife;
  * Created by rafael on 6/5/16.
  */
 
-public class DayNightFragment extends Fragment {
-
+public class SettingsFragment extends Fragment {
     //region View Components
 
     //endregion
 
-    public static DayNightFragment newInstance() {
-        return new DayNightFragment();
+    public static SettingsFragment newInstance() {
+        return new SettingsFragment();
     }
 
-    public DayNightFragment() {}
+    public SettingsFragment() {}
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root  = inflater.inflate(R.layout.fragment_daynight, container, false);
+        View root  = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, root);
         setupView();
         return root;
@@ -38,5 +37,4 @@ public class DayNightFragment extends Fragment {
     private void setupView() {
 
     }
-
 }
