@@ -10,4 +10,5 @@
     <string name="activity_base_drawer_vaction">On Vacation Program</string>
     <string name="activity_base_drawer_help">Help</string>
     <string name="activity_base_drawer_header_title">Thermostat App</string>
+    <string name="activity_base_drawer_main">Main</string>
 </resources>

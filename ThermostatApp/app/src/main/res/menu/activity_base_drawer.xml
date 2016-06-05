@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/base_drawer_main"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/activity_base_drawer_main" />
+        <item
             android:id="@+id/base_drawer_weekly"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/activity_base_drawer_weekly" />
