@@ -1,4 +1,4 @@
-package a2id40.thermostatapp.vacation;
+package a2id40.thermostatapp.fragments.weekly;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,22 +14,22 @@ import butterknife.ButterKnife;
  * Created by rafael on 6/5/16.
  */
 
-public class VacationFragment extends Fragment {
+public class WeeklyFragment extends Fragment {
 
     //region View Components
 
     //endregion
 
-    public static VacationFragment newInstance() {
-        return new VacationFragment();
+    public static WeeklyFragment newInstance() {
+        return new WeeklyFragment();
     }
 
-    public VacationFragment() {}
+    public WeeklyFragment() {}
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root  = inflater.inflate(R.layout.fragment_vacation, container, false);
+        View root  = inflater.inflate(R.layout.fragment_weekly, container, false);
         ButterKnife.bind(this, root);
         setupView();
         return root;
@@ -38,4 +38,5 @@ public class VacationFragment extends Fragment {
     private void setupView() {
 
     }
+
 }

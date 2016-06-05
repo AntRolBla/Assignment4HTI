@@ -1,4 +1,4 @@
-package a2id40.thermostatapp.daynight;
+package a2id40.thermostatapp.fragments.daynight;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import a2id40.thermostatapp.R;
-import a2id40.thermostatapp.vacation.VacationFragment;
 import butterknife.ButterKnife;
 
 /**

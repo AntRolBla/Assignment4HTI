@@ -1,4 +1,4 @@
-package a2id40.thermostatapp.base.util;
+package a2id40.thermostatapp.activities.base.util;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;

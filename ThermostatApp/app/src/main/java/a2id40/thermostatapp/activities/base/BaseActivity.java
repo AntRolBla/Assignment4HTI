@@ -1,4 +1,4 @@
-package a2id40.thermostatapp.base;
+package a2id40.thermostatapp.activities.base;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,12 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import a2id40.thermostatapp.R;
-import a2id40.thermostatapp.base.util.ActivityUtils;
-import a2id40.thermostatapp.daynight.DayNightFragment;
-import a2id40.thermostatapp.help.HelpFragment;
-import a2id40.thermostatapp.main.MainFragment;
-import a2id40.thermostatapp.vacation.VacationFragment;
-import a2id40.thermostatapp.weekly.WeeklyFragment;
+import a2id40.thermostatapp.activities.base.util.ActivityUtils;
+import a2id40.thermostatapp.fragments.daynight.DayNightFragment;
+import a2id40.thermostatapp.fragments.help.HelpFragment;
+import a2id40.thermostatapp.fragments.main.MainFragment;
+import a2id40.thermostatapp.fragments.vacation.VacationFragment;
+import a2id40.thermostatapp.fragments.weekly.WeeklyFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
