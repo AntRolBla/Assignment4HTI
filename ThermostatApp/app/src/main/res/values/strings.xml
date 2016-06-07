@@ -5,4 +5,17 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="activity_base_drawer_weekly">Set Weekly</string>
+    <string name="activity_base_drawer_viewWeekly">View Weekly</string>
+    <string name="activity_base_drawer_vaction">Set Vacation</string>
+    <string name="activity_base_drawer_settings">Settings</string>
+    <string name="activity_base_drawer_help">Help</string>
+    <string name="activity_base_drawer_header_title">Thermostat App</string>
+    <string name="activity_base_drawer_main">Main</string>
+    <string name="fragment_main_minus1_label">-1.0</string>
+    <string name="fragment_main_minus01_label">-0.1</string>
+    <string name="fragment_main_plus01_label">+0.1</string>
+    <string name="fragment_main_plus1_label">+1.0</string>
+    <string name="fragment_main_info_format">Current temperature: %.1f ºC</string>
+    <string name="fragment_main_temp_format">%.1f ºC</string>
 </resources>

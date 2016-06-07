@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/base_drawer_main"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/activity_base_drawer_main" />
+        <item
+            android:id="@+id/base_drawer_weekly"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/activity_base_drawer_weekly" />
+        <item
+            android:id="@+id/base_drawer_viewWeekly"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/activity_base_drawer_viewWeekly" />
+        <item
+            android:id="@+id/base_drawer_vacation"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/activity_base_drawer_vaction" />
+        <item
+            android:id="@+id/base_drawer_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/activity_base_drawer_settings" />
+        <item
+            android:id="@+id/base_drawer_help"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/activity_base_drawer_help" />
+    </group>
+
+</menu>
