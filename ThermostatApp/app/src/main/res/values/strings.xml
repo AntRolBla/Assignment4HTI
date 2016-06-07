@@ -18,4 +18,5 @@
     <string name="fragment_main_plus1_label">+1.0</string>
     <string name="fragment_main_info_format">Current temperature: %.1f ºC</string>
     <string name="fragment_main_temp_format">%.1f ºC</string>
+    <string name="settings">Settings</string>
 </resources>
