@@ -99,4 +99,5 @@ public class WeeklyFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
 }
