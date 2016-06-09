@@ -1,6 +1,5 @@
 package a2id40.thermostatapp.fragments.weekly;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -15,7 +14,7 @@ import butterknife.ButterKnife;
  * Created by rafaelring on 6/9/16.
  */
 
-public class WeeklyDayFragment extends Fragment {
+public class WeeklyDayFragment extends android.support.v4.app.Fragment {
 
     private int mDay;
 

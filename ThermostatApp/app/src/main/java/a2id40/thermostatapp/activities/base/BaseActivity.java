@@ -17,6 +17,7 @@ import a2id40.thermostatapp.fragments.main.MainFragment;
 import a2id40.thermostatapp.fragments.settings.SettingsFragment;
 import a2id40.thermostatapp.fragments.vacation.VacationFragment;
 import a2id40.thermostatapp.fragments.viewweekly.ViewWeeklyFragment;
+import a2id40.thermostatapp.fragments.weekly.WeeklyDayFragment;
 import a2id40.thermostatapp.fragments.weekly.WeeklyFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -108,6 +109,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void openWeeklyDay(int day) {
-        ActivityUtils.replaceFragment(getSupportFragmentManager(), WeeklyFragment.newInstance(), R.id.activity_base_container);
+        ActivityUtils.replaceFragment(getSupportFragmentManager(), WeeklyDayFragment.newInstance(), R.id.activity_base_container);
     }
 }
