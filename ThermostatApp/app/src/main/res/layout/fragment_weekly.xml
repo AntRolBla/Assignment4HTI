@@ -31,6 +31,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:layout_marginBottom="10dp"
+                    android:textSize="20sp"
                     android:text="@string/fragment_weekly_weekdays_title"/>
                 <Button
                     android:id="@+id/fragment_weekly_main_monday_button"
@@ -78,6 +79,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
+                    android:textSize="20sp"
                     android:text="@string/fragment_weekly_weekend_title"/>
                 <Button
                     android:id="@+id/fragment_weekly_main_saturday_button"
