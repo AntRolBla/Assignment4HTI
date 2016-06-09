@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.26"></LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vacation mode help"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="#010000"
+        android:id="@+id/mHowToTextView"
+        android:enabled="false"
+        android:visibility="visible"
+        android:typeface="normal"
+        android:layout_weight="0.19"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.08"
+        android:layout_gravity="right"
+        android:id="@+id/mSpacingOneLinearLayout" />
+
+    <TextView
+        android:layout_width="356dp"
+        android:layout_height="wrap_content"
+        android:text="The vacation mode overrides the weekly program temperature and disables the functionality to change the current temperature on the fly in the main page."
+        android:id="@+id/mDescriptionOneTextView"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20sp"
+        android:layout_weight="0.02" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.18"
+        android:id="@+id/mSpacingTwoLinearLayout"></LinearLayout>
+
+    <TextView
+        android:layout_width="356dp"
+        android:layout_height="wrap_content"
+        android:text="To set it, access the &apos;Set Vacation&apos; option in the menu. There is a slider there to turn it ON or OFF. Simply touch it to initiate the vacation mode if it is activate, or to stop it if it was already running."
+        android:id="@+id/mDescriptionTwoTextView"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20sp" />
+</LinearLayout>

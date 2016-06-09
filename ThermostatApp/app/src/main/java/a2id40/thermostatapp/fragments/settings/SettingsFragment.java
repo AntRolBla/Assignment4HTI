@@ -87,6 +87,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         mEditVacationText.setHint(currentVacationTemp + "");
     }
 
+    private void clearInputValues(){
+        // Set input text with empty value for each temperature
+        mEditDayText.setText("");
+        mEditNightText.setText("");
+        mEditVacationText.setText("");
+    }
+
     private void setupButtons() {
         mSaveButton.setOnClickListener(this);
     }
@@ -153,6 +160,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     Toast.makeText(getContext(), "Your changes have been saved.", Toast.LENGTH_SHORT).show();
                     // Update hint texts values
                     setHintTexts();
+                    // Clear input values
+                    clearInputValues();
                 }
                 break;
         }

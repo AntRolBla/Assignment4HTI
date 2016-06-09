@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.26"></LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Weekly program help"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="#010000"
+        android:id="@+id/mHowToTextView"
+        android:enabled="false"
+        android:visibility="visible"
+        android:typeface="normal"
+        android:layout_weight="0.18"
+        android:layout_gravity="center_horizontal" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.08"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/mSpacingOneLinearLayout" />
+
+    <TextView
+        android:layout_width="356dp"
+        android:layout_height="wrap_content"
+        android:text="The weekly program allows you to set beforehand the temperature type (day or night) for every day of the week, by selecting the initial and final hour of each time slot."
+        android:id="@+id/mDescriptionOneTextView"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20sp"
+        android:layout_weight="0.05" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.18"
+        android:id="@+id/mSpacingTwoLinearLayout"></LinearLayout>
+
+    <TextView
+        android:layout_width="356dp"
+        android:layout_height="wrap_content"
+        android:text="To set it, access the &apos;Set Weekly&apos; option in the menu and access to the day of the week you want to set the program of. There you can select the start and end time and the type. Keep in mind you are only allowed to do 5 transitions to day and 5 to night."
+        android:id="@+id/mDescriptionTwoTextView"
+        android:layout_gravity="center_horizontal"
+        android:textSize="20sp" />
+
+</LinearLayout>

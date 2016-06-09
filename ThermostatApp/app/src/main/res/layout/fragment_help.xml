@@ -1,11 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2"
+        android:layout_weight="0.18"
+        android:layout_gravity="center_horizontal" />
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="HELP FRAGMENT"
-        android:textSize="30dp"
-        android:gravity="center"/>
+        android:layout_height="69dp"
+        android:text="Frequently Asked Questions and Help"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="#010000"
+        android:id="@+id/mFAQTextView"
+        android:enabled="false"
+        android:visibility="visible"
+        android:typeface="normal"
+        android:layout_weight="0.11"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.18"
+        android:weightSum="1">
+
+        <Button
+            android:layout_width="349dp"
+            android:layout_height="fill_parent"
+            android:text="About the weekly program and how to set it "
+            android:id="@+id/mHowToWeeklyButton"
+            android:layout_gravity="center_horizontal"
+            android:textSize="18sp"
+            android:clickable="true"
+            android:typeface="monospace" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.21"
+        android:weightSum="1" >
+
+        <Button
+            android:layout_width="352dp"
+            android:layout_height="fill_parent"
+            android:text="About the temperatures and how to change their values"
+            android:id="@+id/mHowToTemperatureButton"
+            android:layout_gravity="center_horizontal"
+            android:textSize="18sp"
+            android:clickable="true"
+            android:typeface="monospace" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.21"
+        android:weightSum="1" >
+
+        <Button
+            android:layout_width="346dp"
+            android:layout_height="fill_parent"
+            android:text="About the vacation mode and how to set it"
+            android:id="@+id/mHowToVacationButton"
+            android:layout_gravity="center_horizontal"
+            android:textSize="18sp"
+            android:clickable="true"
+            android:typeface="monospace" />
+    </LinearLayout>
+
 </LinearLayout>
