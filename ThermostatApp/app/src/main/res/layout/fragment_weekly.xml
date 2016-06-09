@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/fragment_weekly_main_title"
-        android:textSize="30dp"/>
+        android:textSize="30dp"
+        android:gravity="center" />
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,26 +36,36 @@
                     android:id="@+id/fragment_weekly_main_monday_button"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
                     android:text="@string/fragment_weekly_monday"/>
                 <Button
                     android:id="@+id/fragment_weekly_main_tuesday_button"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
                     android:text="@string/fragment_weekly_tuesday"/>
                 <Button
                     android:id="@+id/fragment_weekly_main_wednesday_button"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
                     android:text="@string/fragment_weekly_wednesday"/>
                 <Button
                     android:id="@+id/fragment_weekly_main_thursday_button"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
                     android:text="@string/fragment_weekly_thursday"/>
                 <Button
                     android:id="@+id/fragment_weekly_main_friday_button"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
                     android:text="@string/fragment_weekly_friday"/>
             </LinearLayout>
             <LinearLayout
@@ -72,11 +83,15 @@
                     android:id="@+id/fragment_weekly_main_saturday_button"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
                     android:text="@string/fragment_weekly_saturday"/>
                 <Button
                     android:id="@+id/fragment_weekly_main_sunday_button"
                     android:layout_width="120dp"
                     android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
                     android:text="@string/fragment_weekly_sunday"/>
             </LinearLayout>
 
