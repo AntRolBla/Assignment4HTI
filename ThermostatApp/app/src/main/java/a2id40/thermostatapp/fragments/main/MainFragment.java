@@ -1,5 +1,6 @@
 package a2id40.thermostatapp.fragments.main;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +28,9 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private static final double MAX_TEMPERATURE = 30.0;
 
     //region View Components
+
+    @BindView(R.id.fragment_main_linearlayout)
+    LinearLayout mMainLinearLayout;
 
     @BindView(R.id.fragment_main_info_textview)
     TextView mInfoTextView;
@@ -137,14 +142,21 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
                     changeTemperatureButtonsEnable(false);
                     mSwitchState = true;
+                    // Optional: set background to grey
+                    //mMainLinearLayout.setBackgroundColor(Color.GRAY);
                     Toast.makeText(getContext(), "The vacation mode is now enabled.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "All temperatures are overridden.", Toast.LENGTH_SHORT).show();
+
                 } else {
                     // Set temperature from weekly (day or night)
                     // TODO
 
                     changeTemperatureButtonsEnable(true);
                     mSwitchState = false;
+                    // Optional: set background back to white
+                    //mMainLinearLayout.setBackgroundColor(Color.WHITE);
                     Toast.makeText(getContext(), "The vacation mode is now disabled.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "The temperature values are taken from the weekly program.", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
