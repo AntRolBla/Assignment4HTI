@@ -34,7 +34,7 @@
         android:id="@+id/mSpacingOneLinearLayout" />
 
     <TextView
-        android:layout_width="356dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:text="The three temperature values (day, night and vacation mode) can all be changed in the Settings page. Simply introduce a decimal value between 5.0 and 30.0 degrees Celsius and save the changes."
         android:id="@+id/mDescriptionOneTextView"
@@ -50,7 +50,7 @@
         android:id="@+id/mSpacingTwoLinearLayout"></LinearLayout>
 
     <TextView
-        android:layout_width="356dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:text="For changing the current temperature shown at the main page, you have four buttons, two for decrease it (-1.0 and -0.1) and two for increase it (+0.1 and +1.0). As long as the thermostat is not set to vacation mode, this functionality is available."
         android:id="@+id/mDescriptionTwoTextView"

@@ -34,7 +34,7 @@
         android:id="@+id/mSpacingOneLinearLayout" />
 
     <TextView
-        android:layout_width="356dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:text="The weekly program allows you to set beforehand the temperature type (day or night) for every day of the week, by selecting the initial and final hour of each time slot."
         android:id="@+id/mDescriptionOneTextView"
@@ -50,7 +50,7 @@
         android:id="@+id/mSpacingTwoLinearLayout"></LinearLayout>
 
     <TextView
-        android:layout_width="356dp"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
         android:text="To set it, access the &apos;Set Weekly&apos; option in the menu and access to the day of the week you want to set the program of. There you can select the start and end time and the type. Keep in mind you are only allowed to do 5 transitions to day and 5 to night."
         android:id="@+id/mDescriptionTwoTextView"

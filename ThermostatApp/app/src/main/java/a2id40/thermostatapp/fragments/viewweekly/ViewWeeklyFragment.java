@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import a2id40.thermostatapp.R;
-import a2id40.thermostatapp.fragments.vacation.VacationFragment;
 import butterknife.ButterKnife;
 
 /**

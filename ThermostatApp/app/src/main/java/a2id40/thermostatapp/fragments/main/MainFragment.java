@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import a2id40.thermostatapp.R;
@@ -40,6 +41,12 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
     @BindView(R.id.fragment_main_plus1_button)
     Button mPlus1Button;
+
+    @BindView(R.id.fragment_main_vacation_textview)
+    TextView mVacationTextView;
+
+    @BindView(R.id.fragment_main_vacation_switch)
+    Switch mVacationSwitch;
 
     //endregion
 
