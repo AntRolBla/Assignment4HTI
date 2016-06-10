@@ -19,14 +19,14 @@ public class HelpFragmentWeekly extends Fragment {
 
     //region View Components
 
-    @BindView(R.id.mHowToTextView)
-    TextView mHowToTextView;
+    @BindView(R.id.fragment_help_weekly_info_textview)
+    TextView mWeeklyHowToTextView;
 
-    @BindView(R.id.mDescriptionOneTextView)
-    TextView mDescriptionOneTextView;
+    @BindView(R.id.fragment_help_weekly_description_one_textview)
+    TextView mWeeklyDescriptionOneTextView;
 
-    @BindView(R.id.mDescriptionTwoTextView)
-    TextView mDescriptionTwoTextView;
+    @BindView(R.id.fragment_help_weekly_description_two_textview)
+    TextView mWeeklyDescriptionTwoTextView;
 
     //endregion
 

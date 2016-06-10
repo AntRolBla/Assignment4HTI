@@ -24,28 +24,28 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     //region View Components
 
-    @BindView(R.id.mSettingsTextView)
+    @BindView(R.id.fragment_settings_info_textview)
     TextView mSettingsTextView;
 
-    @BindView(R.id.mDayTempTextView)
+    @BindView(R.id.fragment_settings_day_textview)
     TextView mDayTempTextView;
 
-    @BindView(R.id.mNightTempTextView)
+    @BindView(R.id.fragment_settings_night_textview)
     TextView mNightTempTextView;
 
-    @BindView(R.id.mVacationTempTextView)
+    @BindView(R.id.fragment_settings_vacation_textview)
     TextView mVacationTempTextView;
 
-    @BindView(R.id.mEditDayText)
+    @BindView(R.id.fragment_settings_set_day_textview)
     TextView mEditDayText;
 
-    @BindView(R.id.mEditNightText)
+    @BindView(R.id.fragment_settings_set_night_textview)
     TextView mEditNightText;
 
-    @BindView(R.id.mEditVacationText)
+    @BindView(R.id.fragment_settings_set_vacation_textview)
     TextView mEditVacationText;
 
-    @BindView(R.id.mSaveButton)
+    @BindView(R.id.fragment_settings_save_button)
     TextView mSaveButton;
 
     //endregion
@@ -101,7 +101,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.mSaveButton:
+            case R.id.fragment_settings_save_button:
 
                 int numberPopUps = 0;
                 boolean dataChanged = false;

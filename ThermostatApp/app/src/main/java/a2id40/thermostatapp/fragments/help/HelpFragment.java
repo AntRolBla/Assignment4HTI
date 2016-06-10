@@ -25,16 +25,16 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
 
     //region View Components
 
-    @BindView(R.id.mFAQTextView)
-    TextView mSettingsTextView;
+    @BindView(R.id.fragment_help_main_info_textview)
+    TextView mHelpMainTextView;
 
-    @BindView(R.id.mHowToWeeklyButton)
+    @BindView(R.id.fragment_help_weekly_button)
     Button mHowToWeeklyButton;
 
-    @BindView(R.id.mHowToTemperatureButton)
+    @BindView(R.id.fragment_help_temperature_button)
     Button mHowToTemperatureButton;
 
-    @BindView(R.id.mHowToVacationButton)
+    @BindView(R.id.fragment_help_vacation_button)
     Button mHowToVacationButton;
 
     //endregion
@@ -67,16 +67,16 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-            case R.id.mHowToWeeklyButton:
+            case R.id.fragment_help_weekly_button:
                 ActivityUtils.replaceFragment(getActivity().getSupportFragmentManager(), HelpFragmentWeekly.newInstance(),
                         R.id.activity_base_container);
                 break;
-            case R.id.mHowToTemperatureButton:
+            case R.id.fragment_help_temperature_button:
                 ActivityUtils.replaceFragment(getActivity().getSupportFragmentManager(), HelpFragmentTemperature.newInstance(),
                         R.id.activity_base_container);
                 break;
 
-            case R.id.mHowToVacationButton:
+            case R.id.fragment_help_vacation_button:
                 ActivityUtils.replaceFragment(getActivity().getSupportFragmentManager(), HelpFragmentVacation.newInstance(),
                         R.id.activity_base_container);
                 break;

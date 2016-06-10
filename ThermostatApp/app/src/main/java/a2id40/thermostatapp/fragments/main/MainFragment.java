@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import a2id40.thermostatapp.R;
 import butterknife.BindView;
@@ -50,7 +53,9 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
     //endregion
 
+    // Initial values, once finished, get data from server
     private double mCurrentTemperature = 21.0;
+    private boolean mSwitchState = false;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -64,6 +69,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         View root  = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, root);
         setupView();
+        switchState();
         return root;
     }
 
@@ -73,11 +79,22 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         setupButtons();
     }
 
+    // Setting the listener for the buttons
     private void setupButtons() {
         mMinus1Button.setOnClickListener(this);
         mMinus01Button.setOnClickListener(this);
         mPlus01Button.setOnClickListener(this);
         mPlus1Button.setOnClickListener(this);
+        mVacationSwitch.setOnClickListener(this);
+    }
+
+    // Method for getting the switch state at start (ON/OFF)
+    private void switchState(){
+        if (mSwitchState){
+            mVacationSwitch.setChecked(true);
+        } else {
+            mVacationSwitch.setChecked(false);
+        }
     }
 
     private void changeTemperature(double amount) {
@@ -112,6 +129,33 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             case R.id.fragment_main_plus1_button:
                 changeTemperature(1.0);
                 break;
+            // Switch functionalities
+            case R.id.fragment_main_vacation_switch:
+                if (mVacationSwitch.isChecked()) {
+                    // Override current temperature, set information to server
+                    // TODO
+
+                    changeTemperatureButtonsEnable(false);
+                    mSwitchState = true;
+                    Toast.makeText(getContext(), "The vacation mode is now enabled.", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Set temperature from weekly (day or night)
+                    // TODO
+
+                    changeTemperatureButtonsEnable(true);
+                    mSwitchState = false;
+                    Toast.makeText(getContext(), "The vacation mode is now disabled.", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
+
+    // Auxiliary method for setting the buttons to enable or disable (depends on 'state')
+    private void changeTemperatureButtonsEnable(boolean state){
+        mMinus1Button.setEnabled(state);
+        mMinus01Button.setEnabled(state);
+        mPlus01Button.setEnabled(state);
+        mPlus1Button.setEnabled(state);
+    }
+
 }

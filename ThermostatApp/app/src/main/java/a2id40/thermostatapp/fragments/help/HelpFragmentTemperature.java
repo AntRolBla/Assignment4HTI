@@ -21,14 +21,14 @@ public class HelpFragmentTemperature extends Fragment {
 
     //region View Components
 
-    @BindView(R.id.mHowToTextView)
-    TextView mHowToTextView;
+    @BindView(R.id.fragment_help_temperature_info_textview)
+    TextView mTemperatureHowToTextView;
 
-    @BindView(R.id.mDescriptionOneTextView)
-    TextView mDescriptionOneTextView;
+    @BindView(R.id.fragment_help_temperature_description_one_textview)
+    TextView mTemperatureDescriptionOneTextView;
 
-    @BindView(R.id.mDescriptionTwoTextView)
-    TextView mDescriptionTwoTextView;
+    @BindView(R.id.fragment_help_temperature_description_two_textview)
+    TextView mTemperatureDescriptionTwoTextView;
 
     //endregion
 
