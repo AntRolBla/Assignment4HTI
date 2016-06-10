@@ -15,7 +15,6 @@ import a2id40.thermostatapp.activities.base.util.ActivityUtils;
 import a2id40.thermostatapp.fragments.help.HelpFragment;
 import a2id40.thermostatapp.fragments.main.MainFragment;
 import a2id40.thermostatapp.fragments.settings.SettingsFragment;
-import a2id40.thermostatapp.fragments.vacation.VacationFragment;
 import a2id40.thermostatapp.fragments.viewweekly.ViewWeeklyFragment;
 import a2id40.thermostatapp.fragments.weekly.WeeklyFragment;
 import butterknife.BindView;
@@ -89,9 +88,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.base_drawer_help:
                 ActivityUtils.replaceFragment(getSupportFragmentManager(), HelpFragment.newInstance(), R.id.activity_base_container);
-                break;
-            case R.id.base_drawer_vacation:
-                ActivityUtils.replaceFragment(getSupportFragmentManager(), VacationFragment.newInstance(), R.id.activity_base_container);
                 break;
             case R.id.base_drawer_weekly:
                 ActivityUtils.replaceFragment(getSupportFragmentManager(), WeeklyFragment.newInstance(), R.id.activity_base_container);

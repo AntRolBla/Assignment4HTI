@@ -15,10 +15,6 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/activity_base_drawer_viewWeekly" />
         <item
-            android:id="@+id/base_drawer_vacation"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/activity_base_drawer_vaction" />
-        <item
             android:id="@+id/base_drawer_settings"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/activity_base_drawer_settings" />
