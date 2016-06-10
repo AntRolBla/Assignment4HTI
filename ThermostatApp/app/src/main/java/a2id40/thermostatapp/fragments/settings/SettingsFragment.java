@@ -70,7 +70,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         View root  = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, root);
         // Take data from server
-        // currentDayTemp = ...  (TODO)
+        // TODO
         setupView();
         return root;
     }
@@ -150,6 +150,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         currentVacationTemp = setVacationTemp;
                         dataChanged = true;
                     }
+                }
+
+                // In case no changes are introduced
+                if (mEditDayText.getText().length() == 0 &&
+                        mEditNightText.getText().length() == 0 &&
+                        mEditVacationText.getText().length() == 0) {
+                    // Pop up message
+                    Toast.makeText(getContext(), "No changes to be saved.", Toast.LENGTH_SHORT).show();
                 }
 
                 // If everything OK, update and show pop up message for feedback to user
