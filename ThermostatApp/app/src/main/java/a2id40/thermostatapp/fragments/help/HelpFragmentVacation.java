@@ -19,14 +19,14 @@ public class HelpFragmentVacation extends Fragment {
 
     //region View Components
 
-    @BindView(R.id.mHowToTextView)
-    TextView mHowToTextView;
+    @BindView(R.id.fragment_help_vacation_info_textview)
+    TextView mVacationHowToTextView;
 
-    @BindView(R.id.mDescriptionOneTextView)
-    TextView mDescriptionOneTextView;
+    @BindView(R.id.fragment_help_vacation_description_one_textview)
+    TextView mVacationDescriptionOneTextView;
 
-    @BindView(R.id.mDescriptionTwoTextView)
-    TextView mDescriptionTwoTextView;
+    @BindView(R.id.fragment_help_vacation_description_two_textview)
+    TextView mVacationDescriptionTwoTextView;
 
     //endregion
 

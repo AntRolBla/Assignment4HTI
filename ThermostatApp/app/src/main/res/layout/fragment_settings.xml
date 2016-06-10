@@ -18,7 +18,7 @@
         android:textSize="24sp"
         android:gravity="center"
         android:textColor="#010000"
-        android:id="@+id/mSettingsTextView"
+        android:id="@+id/fragment_settings_info_textview"
         android:enabled="false"
         android:visibility="visible"
         android:typeface="normal" />
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" Day temperature"
-                android:id="@+id/mDayTempTextView"
+                android:id="@+id/fragment_settings_day_textview"
                 android:textSize="20sp" />
 
             <EditText
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/mEditDayText"
+                android:id="@+id/fragment_settings_set_day_textview"
                 android:layout_gravity="center_horizontal"
                 android:textAlignment="center"
                 android:textSize="18sp" />
@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" Night temperature"
-                android:id="@+id/mNightTempTextView"
+                android:id="@+id/fragment_settings_night_textview"
                 android:textSize="20sp" />
 
             <EditText
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/mEditNightText"
+                android:id="@+id/fragment_settings_set_night_textview"
                 android:layout_gravity="center_horizontal"
                 android:textAlignment="center"
                 android:textSize="18sp" />
@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" On vacation temperature"
-                android:id="@+id/mVacationTempTextView"
+                android:id="@+id/fragment_settings_vacation_textview"
                 android:textSize="20sp" />
 
             <EditText
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/mEditVacationText"
+                android:id="@+id/fragment_settings_set_vacation_textview"
                 android:layout_gravity="center_horizontal"
                 android:textAlignment="center"
                 android:textSize="18sp" />
@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Save changes"
-            android:id="@+id/mSaveButton"
+            android:id="@+id/fragment_settings_save_button"
             android:layout_gravity="center_horizontal" />
     </LinearLayout>
 
