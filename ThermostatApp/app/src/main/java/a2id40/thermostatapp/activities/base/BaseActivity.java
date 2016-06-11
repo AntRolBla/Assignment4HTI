@@ -3,6 +3,7 @@ package a2id40.thermostatapp.activities.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -109,6 +110,16 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void openWeeklyDay(int day) {
-        ActivityUtils.replaceFragment(getSupportFragmentManager(), WeeklyDayFragment.newInstance(), R.id.activity_base_container);
+        Bundle weekDayBundle = new Bundle();
+        weekDayBundle.putInt(WeeklyDayFragment.WEEK_DAY_BUNDLE, day);
+
+        FragmentTransaction weekDayTransaction = getSupportFragmentManager().beginTransaction();
+
+        WeeklyDayFragment weekDayFragment = new WeeklyDayFragment();
+        weekDayFragment.setArguments(weekDayBundle);
+
+        weekDayTransaction.replace(R.id.activity_base_container, weekDayFragment);
+        weekDayTransaction.addToBackStack("Week Day Transaction");
+        weekDayTransaction.commit();
     }
 }
