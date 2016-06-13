@@ -3,6 +3,7 @@ package a2id40.thermostatapp.activities.base;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -16,6 +17,9 @@ import a2id40.thermostatapp.fragments.help.HelpFragment;
 import a2id40.thermostatapp.fragments.main.MainFragment;
 import a2id40.thermostatapp.fragments.settings.SettingsFragment;
 import a2id40.thermostatapp.fragments.viewweekly.ViewWeeklyFragment;
+import a2id40.thermostatapp.fragments.weekly.AddTimeslotFragment;
+import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
+import a2id40.thermostatapp.fragments.weekly.WeeklyDayFragment;
 import a2id40.thermostatapp.fragments.weekly.WeeklyFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,6 +30,8 @@ import butterknife.ButterKnife;
  */
 
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private WeeklyDayFragment mWeeklyDayFragment;
 
     @BindView(R.id.activity_base_toolbar)
     Toolbar mToolbar;
@@ -101,5 +107,37 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void openWeeklyDay(int day) {
+        Bundle weekDayBundle = new Bundle();
+        weekDayBundle.putInt(WeeklyDayFragment.WEEK_DAY_BUNDLE, day);
+
+        mWeeklyDayFragment = new WeeklyDayFragment();
+        mWeeklyDayFragment.setArguments(weekDayBundle);
+
+        FragmentTransaction weekDayTransaction = getSupportFragmentManager().beginTransaction();
+        weekDayTransaction.replace(R.id.activity_base_container, mWeeklyDayFragment);
+        weekDayTransaction.addToBackStack("Week Day Transaction");
+        weekDayTransaction.commit();
+    }
+
+    public void openAddTimeslots(int day, int sunLeft){
+        Bundle addTimeslotsBundle = new Bundle();
+        addTimeslotsBundle.putInt(WeeklyDayFragment.WEEK_DAY_BUNDLE, day);
+        addTimeslotsBundle.putInt(AddTimeslotFragment.ADD_TIMESLOT_SUN_LEFT_BUNDLE, sunLeft);
+
+        AddTimeslotFragment addTimeslotFragment = new AddTimeslotFragment();
+        addTimeslotFragment.setArguments(addTimeslotsBundle);
+
+        FragmentTransaction addTimeslotTransaction = getSupportFragmentManager().beginTransaction();
+        addTimeslotTransaction.replace(R.id.activity_base_container, addTimeslotFragment);
+        addTimeslotTransaction.addToBackStack("Add Timeslots Transaction");
+        addTimeslotTransaction.commit();
+    }
+
+    public void addTimeslotToWeeklyDay(TimeslotModel timeslotModel){
+        getSupportFragmentManager().popBackStack();
+        mWeeklyDayFragment.getTimeslotFromAddTimeslot(timeslotModel);
     }
 }

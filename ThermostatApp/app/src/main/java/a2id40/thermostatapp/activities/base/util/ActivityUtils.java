@@ -20,6 +20,7 @@ public class ActivityUtils {
     public static void replaceFragment (@NonNull FragmentManager fragmentManager,
                                         @NonNull Fragment fragment, int frameId) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.addToBackStack(fragment.getClass().toString());
         transaction.replace(frameId, fragment);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
