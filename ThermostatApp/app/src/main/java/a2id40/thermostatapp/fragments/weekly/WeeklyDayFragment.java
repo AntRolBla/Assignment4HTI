@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.fragments.vacation.VacationFragment;
 import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
 import butterknife.BindView;
@@ -29,6 +30,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     private int mDay;
     private String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
     private TimeslotsAdapter mTimeslotsAdapter;
+    private int mNumberSunLeft = 5;
 
     public static final String WEEK_DAY_BUNDLE = "Week Day Random Value";
 
@@ -82,19 +84,24 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         mAddTimeslotButton.setOnClickListener(this);
     }
 
+    public void getTimeslotFromAddTimeslot(TimeslotModel timeslotModel){
+
+    }
+
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.fragment_weekly_day_add_timeslot_button:
+                ((BaseActivity) getActivity()).openAddTimeslots(mDay, mNumberSunLeft);
                 break;
         }
     }
 
     public ArrayList<TimeslotModel> createFalseData(){
         ArrayList<TimeslotModel> data = new ArrayList<>();
-        data.add(new TimeslotModel("07:00 - 09:00", true));
-        data.add(new TimeslotModel("09:00 - 11:00", false));
-        data.add(new TimeslotModel("11:00 - 15:00", true));
-        data.add(new TimeslotModel("15:00 - 17:00", false));
+//        data.add(new TimeslotModel("07:00 - 09:00", true));
+//        data.add(new TimeslotModel("09:00 - 11:00", false));
+//        data.add(new TimeslotModel("11:00 - 15:00", true));
+//        data.add(new TimeslotModel("15:00 - 17:00", false));
         return data;
     }
 }
