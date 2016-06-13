@@ -12,7 +12,8 @@
         android:text="Weekly Program: "
         android:textSize="30dp"
         android:gravity="center"
-        android:id="@+id/fragment_weekly_day_week_day_textview"/>
+        android:id="@+id/fragment_weekly_day_week_day_textview"
+        android:layout_marginBottom="15dp"/>
     <Button
         android:layout_width="120dp"
         android:layout_height="wrap_content"
@@ -20,13 +21,15 @@
         android:id="@+id/fragment_weekly_day_add_timeslot_button"
         style="@style/AppButton.Primary"
         android:layout_margin="20dp"
-        android:text="Add time slot"/>
+        android:text="Add time slot"
+        android:layout_marginBottom="25dp"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="300dp"
         android:layout_height="200dp"
         android:layout_gravity="center"
         android:id="@+id/fragment_weekly_day_timeslots_recycler"
-        android:scrollbars="vertical">
+        android:scrollbars="vertical"
+        android:layout_marginBottom="25dp">
     </android.support.v7.widget.RecyclerView>
     <LinearLayout
         android:orientation="horizontal"
@@ -39,18 +42,21 @@
             android:layout_height="match_parent"
             android:text="2x"
             android:textSize="22dp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:layout_marginRight="8dp"/>
         <ImageView
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:src="@drawable/sun_image"/>
+            android:src="@drawable/sun_image"
+            android:layout_marginRight="20dp"/>
         <TextView
             android:id="@+id/fragment_weekly_day_nights_left_textview"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:text="3x"
             android:textSize="22dp"
-            android:gravity="center" />
+            android:gravity="center"
+            android:layout_marginRight="8dp"/>
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
