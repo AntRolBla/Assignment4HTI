@@ -41,7 +41,7 @@ public class Helpers {
         return switchModelArrayList;
     }
 
-    public void setSwitchFromWeekDay(int day, WeekProgramModel weekProgramModel, ArrayList<SwitchModel> switchesArray){
+    public WeekProgramModel setSwitchFromWeekDay(int day, WeekProgramModel weekProgramModel, ArrayList<SwitchModel> switchesArray){
         switch (day){
             case 0:
                 weekProgramModel.getWeekProgram().getDays().getMonday().setSwitches(switchesArray);
@@ -65,6 +65,7 @@ public class Helpers {
                 weekProgramModel.getWeekProgram().getDays().getSunday().setSwitches(switchesArray);
                 break;
         }
+        return weekProgramModel;
     }
 
     public ArrayList<TimeslotModel> convertArraySwitchesToArrayTimeslots(ArrayList<SwitchModel> switchModel){
