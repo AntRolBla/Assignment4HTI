@@ -11,7 +11,7 @@ public class APIClient {
 
     private static ThermostatAPI thermostatAPIInterface;
 
-    private static String baseUrl = "";
+    private static String baseUrl = "http://pcwin889.win.tue.nl/2id40-ws/41/";
 
     public static ThermostatAPI getClient() {
 

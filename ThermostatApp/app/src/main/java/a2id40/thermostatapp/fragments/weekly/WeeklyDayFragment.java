@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.activities.base.BaseActivity;
-import a2id40.thermostatapp.fragments.vacation.VacationFragment;
 import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;

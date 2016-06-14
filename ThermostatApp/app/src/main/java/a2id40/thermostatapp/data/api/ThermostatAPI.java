@@ -1,8 +1,10 @@
 package a2id40.thermostatapp.data.api;
 
+import a2id40.thermostatapp.data.models.DayModel;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -12,9 +14,10 @@ import retrofit2.http.Query;
  */
 
 public interface ThermostatAPI {
+    @Headers("Accept: application/json")
     //TODO: Implement the thermostat api
 
-//    @GET("example/{pathParam")
+//    @GET("example/{pathParam}")
 //    Call<Model> getExample(
 //            @Path("pathParam") String param
 //    );
@@ -29,4 +32,6 @@ public interface ThermostatAPI {
 //            @Body Model data
 //    );
 
+    @GET("day")
+    Call<DayModel> getCurrentDay();
 }

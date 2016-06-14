@@ -14,9 +14,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.IOException;
+
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.data.api.APIClient;
+import a2id40.thermostatapp.data.models.DayModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by rafael on 6/5/16.
@@ -61,6 +68,8 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // Initial values, once finished, get data from server
     private double mCurrentTemperature = 21.0;
     private boolean mSwitchState = false;
+    private String mCurrentDayString;
+    private DayModel mDayModel;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -81,7 +90,34 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private void setupView() {
         mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
         mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mCurrentTemperature));
+        setupData();
         setupButtons();
+    }
+
+    private void setupData(){
+        Call<DayModel> callDayModel = APIClient.getClient().getCurrentDay(); //create the request
+        // makes the request, can have two responses from server
+        callDayModel.enqueue(new Callback<DayModel>() {
+
+            // has to validate is response is success
+            @Override
+            public void onResponse(Call<DayModel> call, Response<DayModel> response) {
+                if (response.isSuccessful()){
+                    mDayModel = response.body(); // getting the response into the model variable
+                    mCurrentDayString = mDayModel.getCurrent_day(); // passing to String variable
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DayModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
     }
 
     // Setting the listener for the buttons
