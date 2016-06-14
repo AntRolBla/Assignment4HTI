@@ -23,20 +23,7 @@ import retrofit2.http.Query;
  */
 
 public interface ThermostatAPI {
-//    @GET("example/{pathParam}")
-//    Call<Model> getExample(
-//            @Path("pathParam") String param
-//    );
 
-//    @GET("example/list")
-//    Call<Model> getExample2(
-//            @Query("param") String param
-//    );
-
-//    @POST("example/new")
-//    Call<Model> saveExample(
-//            @Body Model data
-//    );
     @Headers("Accept: application/json")
     @GET("day")
     Call<DayModel> getCurrentDay();
