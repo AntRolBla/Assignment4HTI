@@ -16,6 +16,9 @@ import java.io.IOException;
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.DayModel;
+import a2id40.thermostatapp.data.models.TargetTemperatureModel;
+import a2id40.thermostatapp.data.models.TemperatureModel;
+import a2id40.thermostatapp.data.models.UpdateResponse;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -62,11 +65,18 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
     //endregion
 
-    // Initial values, once finished, get data from server
+    // region Variables declaration
     private double mCurrentTemperature = 21.0;
+    // mCurrentTemperature should be updated as it is changed in the server, as well as mInfoTextView
+    private double mTargetTemperature = 21.0;
     private boolean mSwitchState = false;
-    private String mCurrentDayString;
+    private String mCurrentDayString = "";
+
     private DayModel mDayModel;
+    private TemperatureModel mTemperatureModel;
+    private TargetTemperatureModel mTargetTemperatureModel;
+
+    // endregion
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -85,36 +95,27 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     private void setupView() {
-        mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
-        mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mCurrentTemperature));
-        setupData();
-        setupButtons();
+        setupData();    // Get data from server
+        setupTexts();   // Put data on screen texts
+        setupButtons(); // Set up buttons listeners
     }
 
     private void setupData(){
-        Call<DayModel> callDayModel = APIClient.getClient().getCurrentDay(); //create the request
-        // makes the request, can have two responses from server
-        callDayModel.enqueue(new Callback<DayModel>() {
+        // Get current day
+        currentDayCaller();
+        // Get what current temperature the server has
+        currentTemperatureCaller();
+        // Get what target temperature is set
+        targetTemperatureCaller();
+        // Get state for the switch, then update mSwitchState variable and call switchState()
+        // TODO
+        onVacationSwitchCaller();
+        onVacationSwitchUpdater();
+    }
 
-            // has to validate is response is success
-            @Override
-            public void onResponse(Call<DayModel> call, Response<DayModel> response) {
-                if (response.isSuccessful()){
-                    mDayModel = response.body(); // getting the response into the model variable
-                    mCurrentDayString = mDayModel.getCurrentDay(); // passing to String variable
-                } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
-                }
-            }
-
-            @Override
-            public void onFailure(Call<DayModel> call, Throwable t) {
-                String error = t.getMessage();
-            }
-        });
+    private void setupTexts(){
+        mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
+        mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mTargetTemperature));
     }
 
     // Setting the listener for the buttons
@@ -136,18 +137,26 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     private void changeTemperature(double amount) {
-        mCurrentTemperature = getTemperatureInRange(mCurrentTemperature, amount);
-        mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
-        mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mCurrentTemperature));
+        mTargetTemperature = getTemperatureInRange(mTargetTemperature, amount);
+        // Update on screen texts
+        setupTexts();
+        // Update value of current temperature to server every time we change it
+        updateTemperatureToServer(mTargetTemperature);
     }
 
     private double getTemperatureInRange(double currentTemp, double amount) {
         currentTemp = currentTemp + amount;
-        if (currentTemp < MIN_TEMPERATURE) {
+        if (currentTemp <= MIN_TEMPERATURE) {
+            // Disable negative buttons to prevent user from clicking
+            changeTemperatureNegativeButtonsEnable(false);
             return MIN_TEMPERATURE;
-        } else if (currentTemp > MAX_TEMPERATURE) {
+        } else if (currentTemp >= MAX_TEMPERATURE) {
+            // Disable positive buttons to prevent user from clicking
+            changeTemperaturePositiveButtonsEnable(false);
             return MAX_TEMPERATURE;
         } else {
+            changeTemperatureNegativeButtonsEnable(true);
+            changeTemperaturePositiveButtonsEnable(true);
             return currentTemp;
         }
     }
@@ -171,23 +180,27 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             case R.id.fragment_main_vacation_switch:
                 if (mVacationSwitch.isChecked()) {
                     // Override current temperature, set information to server
-                    // TODO
-
-                    changeTemperatureButtonsEnable(false);
+                    switchONVacationModeOnServer();
+                    // Disable all 4 buttons and set the switch state to active
+                    changeTemperaturePositiveButtonsEnable(false);
+                    changeTemperatureNegativeButtonsEnable(false);
                     mSwitchState = true;
-                    // Optional: set background to grey
-                    //mMainLinearLayout.setBackgroundColor(Color.GRAY);
+                    // Update on screen texts
+                    setupTexts();
+                    // Pop up messages
                     Toast.makeText(getContext(), "The vacation mode is now enabled.", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getContext(), "All temperatures are overridden.", Toast.LENGTH_SHORT).show();
 
                 } else {
                     // Set temperature from weekly (day or night)
-                    // TODO
-
-                    changeTemperatureButtonsEnable(true);
+                    switchOFFVacationModeOnServer();
+                    // Make available the buttons that can be used and set the switch state to non active
+                    if (mTargetTemperature > MIN_TEMPERATURE){ changeTemperatureNegativeButtonsEnable(true); }
+                    if (mTargetTemperature < MAX_TEMPERATURE){ changeTemperaturePositiveButtonsEnable(true); }
                     mSwitchState = false;
-                    // Optional: set background back to white
-                    //mMainLinearLayout.setBackgroundColor(Color.WHITE);
+                    // Update on screen texts
+                    setupTexts();
+                    // Pop up messages
                     Toast.makeText(getContext(), "The vacation mode is now disabled.", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getContext(), "The temperature values are taken from the weekly program.", Toast.LENGTH_SHORT).show();
                 }
@@ -195,12 +208,130 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         }
     }
 
-    // Auxiliary method for setting the buttons to enable or disable (depends on 'state')
-    private void changeTemperatureButtonsEnable(boolean state){
-        mMinus1Button.setEnabled(state);
-        mMinus01Button.setEnabled(state);
+    // Auxiliary methods for setting the buttons to enable or disable (depends on 'state')
+    private void changeTemperaturePositiveButtonsEnable(boolean state){
         mPlus01Button.setEnabled(state);
         mPlus1Button.setEnabled(state);
     }
 
+    private void changeTemperatureNegativeButtonsEnable(boolean state){
+        mMinus1Button.setEnabled(state);
+        mMinus01Button.setEnabled(state);
+    }
+
+    // Method called everytime we change the temperature value through the buttons
+    private void updateTemperatureToServer(double temperature){
+        // TODO
+        // Update the server value for target temperature (POST)
+        //TargetTemperatureModel model = new TargetTemperatureModel (temperature);
+        //UpdateResponse updateResponse = (UpdateResponse) APIClient.getClient().setTargetTemperature(model);
+        // App crashes (probably the POST is not well defined)
+    }
+
+    // Method called when the onVacation switch is changed from OFF to ON
+    private void switchONVacationModeOnServer(){
+        // TODO
+        // Override current temperature (local)
+        // Override target temperature (local)
+        // Override target temperature on sever (POST)  [setTargetTemperature]
+        // >>> needs get onVacationTemperature                                    <Missing from API>
+        // Disable weekly switches on server (POST)     [setWeekProgramState(off)]
+    }
+
+    // Method called when the onVacation switch is changed from ON to OFF
+    private void switchOFFVacationModeOnServer(){
+        // TODO
+        // Set weekly back again (POST)                 [setWeekProgramState(on)]
+        // Get temperature from weekly (GET)
+        // Override current temperature (local)
+        // Override target temperature (local)
+        // Override target temperature on server (POST)
+    }
+
+    // Callers as auxiliar methods  ----------------------------------------------------------------
+
+    // Current day caller
+    public void currentDayCaller(){
+        Call<DayModel> callDayModel = APIClient.getClient().getCurrentDay(); //create the request
+        // makes the request, can have two responses from server
+        callDayModel.enqueue(new Callback<DayModel>() {
+
+            // has to validate is response is success
+            public void onResponse(Call<DayModel> call, Response<DayModel> response) {
+                if (response.isSuccessful()){
+                    mDayModel = response.body(); // getting the response into the model variable
+                    mCurrentDayString = mDayModel.getCurrentDay(); // passing to String variable
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            public void onFailure(Call<DayModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
+    // Current temperature caller
+    public void currentTemperatureCaller(){
+        Call<TemperatureModel> callTemperatureCurrent = APIClient.getClient().getCurrentTemperature();
+        // makes the request, can have two responses from server
+        callTemperatureCurrent.enqueue(new Callback<TemperatureModel>() {
+
+            // has to validate is response is success
+            public void onResponse(Call<TemperatureModel> call, Response<TemperatureModel> response) {
+                if (response.isSuccessful()){
+                    mTemperatureModel = response.body(); // getting the response into the model variable
+                    mCurrentTemperature = mTemperatureModel.getCurrentTemperature(); // passing to String variable
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            public void onFailure(Call<TemperatureModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
+    // Target temperature caller
+    public void targetTemperatureCaller(){
+        Call<TargetTemperatureModel> callTargetTemperature = APIClient.getClient().getTargetTemperature();
+        // makes the request, can have two responses from server
+        callTargetTemperature.enqueue(new Callback<TargetTemperatureModel>() {
+
+            // has to validate is response is success
+            public void onResponse(Call<TargetTemperatureModel> call, Response<TargetTemperatureModel> response) {
+                if (response.isSuccessful()){
+                    mTargetTemperatureModel = response.body(); // getting the response into the model variable
+                    mTargetTemperature = mTargetTemperatureModel.getTargetTemperature(); // passing to String variable
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            public void onFailure(Call<TargetTemperatureModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
+    // On vacation caller
+    public void onVacationSwitchCaller() {
+        // TODO
+    }
+
+    // On vacation switcher updater
+    public void onVacationSwitchUpdater() {
+        // TODO
+    }
 }

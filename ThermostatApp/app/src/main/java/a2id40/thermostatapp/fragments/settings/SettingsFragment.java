@@ -112,7 +112,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 if (mEditDayText.getText().length() > 0) {
                     setDayTemp = Double.parseDouble(mEditDayText.getText().toString());
                     // Limiting to 1 decimal (precision is in 0.1)
-                    setNightTemp = roudToOneDecimal(setNightTemp);
+                    setNightTemp = roundToOneDecimal(setNightTemp);
                     sameDayTemp = (currentDayTemp == setDayTemp);
                     if (!sameDayTemp){   // Only check everything if it is different
                         tempOK = checkTemperatureInRange(setDayTemp);
@@ -133,7 +133,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     setNightTemp = Double.parseDouble(mEditNightText.getText().toString());
                     sameNightTemp = (currentNightTemp == setNightTemp);
                     // Limiting to 1 decimal (precision is in 0.1)
-                    setNightTemp = roudToOneDecimal(setNightTemp);
+                    setNightTemp = roundToOneDecimal(setNightTemp);
                     if (!sameNightTemp){   // Only check everything if it is different
                         tempOK = checkTemperatureInRange(setNightTemp);
                         if (!tempOK && numberPopUps == 0) {
@@ -152,7 +152,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 if (mEditVacationText.getText().length() > 0) {
                     setVacationTemp = Double.parseDouble(mEditVacationText.getText().toString());
                     // Limiting to 1 decimal (precision is in 0.1)
-                    setVacationTemp = roudToOneDecimal(setVacationTemp);
+                    setVacationTemp = roundToOneDecimal(setVacationTemp);
                     sameVacationTemp = (currentVacationTemp == setVacationTemp);
                     if (!sameVacationTemp) {   // Only check everything if it is different
                         tempOK = checkTemperatureInRange(setVacationTemp);
@@ -181,7 +181,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 // If everything OK, update and show pop up message for feedback to user
                 if (dataChanged && numberPopUps == 0) {
                     // Send changes to sever (override with new values)
-                    // TODO
+                    if (mEditDayText.getText().length() != 0)       { putNewDayTempValue(); }
+                    if (mEditNightText.getText().length() != 0)     { putNewNightTempValue(); }
+                    if (mEditVacationText.getText().length() != 0)  { putNewVacationTempValue(); }
                     // Pop up message
                     Toast.makeText(getContext(), "Your changes have been saved.", Toast.LENGTH_SHORT).show();
                     // Update hint texts values
@@ -193,6 +195,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    // Simple checker for temperature values
     private boolean checkTemperatureInRange(double currentTemp) {
         if (currentTemp < MIN_TEMPERATURE || currentTemp > MAX_TEMPERATURE) {
             return false;
@@ -201,7 +204,25 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private double roudToOneDecimal (double number){
+    // For rounding the input values
+    private double roundToOneDecimal (double number){
         return Math.round ( number * 10.0) / 10.0;
+    }
+
+    // PUT for the values as auxiliar methods  -----------------------------------------------------
+
+    public void putNewDayTempValue(){
+        // Send currentDayTemp value to server (POST)
+        // setDayTemperature()
+    }
+
+    public void putNewNightTempValue(){
+        // Send currentNightTemp value to server (POST)
+        // setNightTemperature()
+    }
+
+    public void putNewVacationTempValue(){
+        // Send currentVacationTemp value to server (POST)
+        // setVacationTemperature()                                               <Missing from API>
     }
 }
