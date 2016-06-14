@@ -1,6 +1,13 @@
 package a2id40.thermostatapp.data.api;
 
 import a2id40.thermostatapp.data.models.DayModel;
+import a2id40.thermostatapp.data.models.DayTemperatureModel;
+import a2id40.thermostatapp.data.models.NightTemperatureModel;
+import a2id40.thermostatapp.data.models.TargetTemperatureModel;
+import a2id40.thermostatapp.data.models.TemperatureModel;
+import a2id40.thermostatapp.data.models.TimeModel;
+import a2id40.thermostatapp.data.models.WeekProgramModel;
+import a2id40.thermostatapp.data.models.WeekProgramState;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -14,9 +21,6 @@ import retrofit2.http.Query;
  */
 
 public interface ThermostatAPI {
-    @Headers("Accept: application/json")
-    //TODO: Implement the thermostat api
-
 //    @GET("example/{pathParam}")
 //    Call<Model> getExample(
 //            @Path("pathParam") String param
@@ -31,7 +35,35 @@ public interface ThermostatAPI {
 //    Call<Model> saveExample(
 //            @Body Model data
 //    );
-
+    @Headers("Accept: application/json")
     @GET("day")
     Call<DayModel> getCurrentDay();
+
+    @Headers("Accept: application/json")
+    @GET("time")
+    Call<TimeModel> getCurrentTime();
+
+    @Headers("Accept: application/json")
+    @GET("currentTemperature")
+    Call<TemperatureModel> getCurrentTemperature();
+
+    @Headers("Accept: application/json")
+    @GET("targetTemperature")
+    Call<TargetTemperatureModel> getTargetTemperature();
+
+    @Headers("Accept: application/json")
+    @GET("dayTemperature")
+    Call<DayTemperatureModel> getDayTemperature();
+
+    @Headers("Accept: application/json")
+    @GET("nightTemperature")
+    Call<NightTemperatureModel> getNightTemperature();
+
+    @Headers("Accept: application/json")
+    @GET("weekProgramState")
+    Call<WeekProgramState> getWeekProgramState();
+
+    @Headers("Accept: application/json")
+    @GET("weekProgram")
+    Call<WeekProgramModel> getWeekProgram();
 }
