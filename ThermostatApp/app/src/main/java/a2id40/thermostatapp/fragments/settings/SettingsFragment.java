@@ -106,62 +106,80 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 int numberPopUps = 0;
                 boolean dataChanged = false;
                 boolean tempOK = false;
+                boolean sameDayTemp = false, sameNightTemp = false, sameVacationTemp = false;
 
                 // Save values and check temperatures are between 5 and 30, otherwise give a pop up
                 if (mEditDayText.getText().length() > 0) {
                     setDayTemp = Double.parseDouble(mEditDayText.getText().toString());
-                    tempOK = checkTemperatureInRange(setDayTemp);
-                    if (!tempOK && numberPopUps == 0) {
-                        Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                            Toast.LENGTH_SHORT).show();
-                        numberPopUps++;
-                    } else {
-                        // Otherwise, we overwrite it
-                        currentDayTemp = setDayTemp;
-                        dataChanged = true;
+                    // Limiting to 1 decimal (precision is in 0.1)
+                    setNightTemp = roudToOneDecimal(setNightTemp);
+                    sameDayTemp = (currentDayTemp == setDayTemp);
+                    if (!sameDayTemp){   // Only check everything if it is different
+                        tempOK = checkTemperatureInRange(setDayTemp);
+                        if (!tempOK && numberPopUps == 0) {
+                            Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
+                                Toast.LENGTH_SHORT).show();
+                            numberPopUps++;
+                        } else {
+                            // Otherwise, we overwrite it
+                            currentDayTemp = setDayTemp;
+                            dataChanged = true;
+                        }
                     }
                 }
 
                 // Save values and check temperatures are between 5 and 30, otherwise give a pop up
                 if (mEditNightText.getText().length() > 0) {
                     setNightTemp = Double.parseDouble(mEditNightText.getText().toString());
-                    tempOK = checkTemperatureInRange(setNightTemp);
-                    if (!tempOK && numberPopUps == 0) {
-                        Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                            Toast.LENGTH_SHORT).show();
-                        numberPopUps++;
-                    } else {
-                        // Otherwise, we overwrite it
-                        currentNightTemp = setNightTemp;
-                        dataChanged = true;
+                    sameNightTemp = (currentNightTemp == setNightTemp);
+                    // Limiting to 1 decimal (precision is in 0.1)
+                    setNightTemp = roudToOneDecimal(setNightTemp);
+                    if (!sameNightTemp){   // Only check everything if it is different
+                        tempOK = checkTemperatureInRange(setNightTemp);
+                        if (!tempOK && numberPopUps == 0) {
+                            Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
+                                Toast.LENGTH_SHORT).show();
+                            numberPopUps++;
+                        } else {
+                            // Otherwise, we overwrite it
+                            currentNightTemp = setNightTemp;
+                            dataChanged = true;
+                        }
                     }
                 }
 
                 // Save values and check temperatures are between 5 and 30, otherwise give a pop up
                 if (mEditVacationText.getText().length() > 0) {
                     setVacationTemp = Double.parseDouble(mEditVacationText.getText().toString());
-                    tempOK = checkTemperatureInRange(setVacationTemp);
-                    if (!tempOK && numberPopUps == 0) {
-                        Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                            Toast.LENGTH_SHORT).show();
-                        numberPopUps++;
-                    } else {
-                        // Otherwise, we overwrite it
-                        currentVacationTemp = setVacationTemp;
-                        dataChanged = true;
+                    // Limiting to 1 decimal (precision is in 0.1)
+                    setVacationTemp = roudToOneDecimal(setVacationTemp);
+                    sameVacationTemp = (currentVacationTemp == setVacationTemp);
+                    if (!sameVacationTemp) {   // Only check everything if it is different
+                        tempOK = checkTemperatureInRange(setVacationTemp);
+                        if (!tempOK && numberPopUps == 0) {
+                            Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
+                                Toast.LENGTH_SHORT).show();
+                            numberPopUps++;
+                        } else {
+                            // Otherwise, we overwrite it
+                            currentVacationTemp = setVacationTemp;
+                            dataChanged = true;
+                        }
                     }
                 }
 
                 // In case no changes are introduced
-                if (mEditDayText.getText().length() == 0 &&
-                        mEditNightText.getText().length() == 0 &&
-                        mEditVacationText.getText().length() == 0) {
+                if ((mEditDayText.getText().length() == 0 && mEditNightText.getText().length() == 0 &&
+                        mEditVacationText.getText().length() == 0)
+                        || (sameDayTemp || sameNightTemp || sameVacationTemp)) {
                     // Pop up message
                     Toast.makeText(getContext(), "No changes to be saved.", Toast.LENGTH_SHORT).show();
+                    // Clear input values
+                    clearInputValues();
                 }
 
                 // If everything OK, update and show pop up message for feedback to user
-                if (dataChanged) {
+                if (dataChanged && numberPopUps == 0) {
                     // Send changes to sever (override with new values)
                     // TODO
                     // Pop up message
@@ -181,5 +199,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         } else {
             return true;
         }
+    }
+
+    private double roudToOneDecimal (double number){
+        return Math.round ( number * 10.0) / 10.0;
     }
 }
