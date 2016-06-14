@@ -17,4 +17,8 @@ public class WeekProgram {
     public DaysProgramModel getDays() {
         return days;
     }
+
+    public void setIsWeekProgramOn(boolean isWeekProgramOn) {
+        this.state = isWeekProgramOn;
+    }
 }

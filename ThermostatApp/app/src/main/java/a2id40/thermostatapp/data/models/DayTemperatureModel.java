@@ -8,7 +8,15 @@ public class DayTemperatureModel {
 
     double day_temperature;
 
+    public DayTemperatureModel(double dayTemperature) {
+        this.day_temperature = dayTemperature;
+    }
+
     public double getDayTemperature() {
         return day_temperature;
+    }
+
+    public void setDayTemperature(double dayTemperature) {
+        this.day_temperature = dayTemperature;
     }
 }

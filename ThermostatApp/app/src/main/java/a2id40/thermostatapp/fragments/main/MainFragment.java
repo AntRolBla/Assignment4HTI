@@ -21,9 +21,11 @@ import java.util.Date;
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.DayModel;
+import a2id40.thermostatapp.data.models.DayTemperatureModel;
 import a2id40.thermostatapp.data.models.TargetTemperatureModel;
 import a2id40.thermostatapp.data.models.TemperatureModel;
 import a2id40.thermostatapp.data.models.TimeModel;
+import a2id40.thermostatapp.data.models.UpdateResponse;
 import a2id40.thermostatapp.data.models.WeekProgram;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
 import butterknife.BindView;
@@ -102,39 +104,16 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     private void setupData(){
-//        Call<DayModel> callDayModel = APIClient.getClient().getCurrentDay(); //create the request
-//        // makes the request, can have two responses from server
-//        callDayModel.enqueue(new Callback<DayModel>() {
-//
-//            // has to validate is response is success
-//            @Override
-//            public void onResponse(Call<DayModel> call, Response<DayModel> response) {
-//                if (response.isSuccessful()){
-//                    mDayModel = response.body(); // getting the response into the model variable
-//                    mCurrentDayString = mDayModel.getCurrent_day(); // passing to String variable
-//                } else {
-//                    try {
-//                        String onResponse = response.errorBody().string();
-//                    } catch (IOException e){
-//                    };
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<DayModel> call, Throwable t) {
-//                String error = t.getMessage();
-//            }
-//        });
-        Call<WeekProgramModel> callDayModel = APIClient.getClient().getWeekProgram(); //create the request
+        Call<DayModel> callDayModel = APIClient.getClient().getCurrentDay(); //create the request
         // makes the request, can have two responses from server
-        callDayModel.enqueue(new Callback<WeekProgramModel>() {
+        callDayModel.enqueue(new Callback<DayModel>() {
 
             // has to validate is response is success
             @Override
-            public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
+            public void onResponse(Call<DayModel> call, Response<DayModel> response) {
                 if (response.isSuccessful()){
-                    WeekProgramModel t = response.body(); // getting the response into the model variable
-                    WeekProgram x = t.getWeekProgram();
+                    mDayModel = response.body(); // getting the response into the model variable
+                    mCurrentDayString = mDayModel.getCurrentDay(); // passing to String variable
                 } else {
                     try {
                         String onResponse = response.errorBody().string();
@@ -144,7 +123,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             }
 
             @Override
-            public void onFailure(Call<WeekProgramModel> call, Throwable t) {
+            public void onFailure(Call<DayModel> call, Throwable t) {
                 String error = t.getMessage();
             }
         });

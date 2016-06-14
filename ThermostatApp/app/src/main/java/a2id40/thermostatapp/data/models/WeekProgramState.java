@@ -8,7 +8,15 @@ public class WeekProgramState {
 
     boolean week_program_state;
 
-    public boolean isWeekProgramStateOn() {
+    public WeekProgramState(boolean isWeekProgramOn) {
+        this.week_program_state = isWeekProgramOn;
+    }
+
+    public boolean isWeekProgramOn() {
         return week_program_state;
+    }
+
+    public void setIsWeekProgramOn(boolean isWeekProgramOn) {
+        this.week_program_state = isWeekProgramOn;
     }
 }
