@@ -9,13 +9,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.activities.base.BaseActivity;
+import a2id40.thermostatapp.data.api.APIClient;
+import a2id40.thermostatapp.data.models.DaysProgramModel;
+import a2id40.thermostatapp.data.models.SwitchModel;
+import a2id40.thermostatapp.data.models.WeekProgram;
+import a2id40.thermostatapp.data.models.WeekProgramModel;
+import a2id40.thermostatapp.fragments.Utils.Helpers;
 import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by rafaelring on 6/9/16.
@@ -23,15 +33,21 @@ import butterknife.ButterKnife;
 
 public class WeeklyDayFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
-    private static final int MAX_NIGHTS_AVAILABLE = 5;
-    private static final int MAX_DAYS_AVAILABLE = 5;
-
-    private int mDay;
-    private String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-    private TimeslotsAdapter mTimeslotsAdapter;
-    private int mNumberSunLeft = 5;
+//    private static final int MAX_NIGHTS_AVAILABLE = 5;
+//    private static final int MAX_DAYS_AVAILABLE = 5;
 
     public static final String WEEK_DAY_BUNDLE = "Week Day Random Value";
+    private String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+
+    private int mDay;
+    private TimeslotsAdapter mTimeslotsAdapter;
+    private int mNumberSunLeft = 5;
+    private ArrayList<TimeslotModel> mTimeslotsArray;
+    private Helpers helper;
+
+    // Variable to store data from server
+    private WeekProgramModel mWeekProgramModel;
+    private ArrayList<SwitchModel> mSwitchesArray;
 
     //region View Components
 
@@ -63,8 +79,37 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         ButterKnife.bind(this, root);
         Bundle weekDayBundle = this.getArguments();
         mDay = weekDayBundle.getInt(WEEK_DAY_BUNDLE);
-        setupView();
+        setupData();
+
         return root;
+    }
+
+    private void setupData(){
+        Call<WeekProgramModel> callWeekProgramModel = APIClient.getClient().getWeekProgram();
+        callWeekProgramModel.enqueue(new Callback<WeekProgramModel>() {
+            @Override
+            public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
+                if (response.isSuccessful()){
+                    mWeekProgramModel = response.body();
+                    mSwitchesArray = helper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
+                    mTimeslotsArray = helper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
+                    setupView();
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                        //TODO: handle notSuccessful
+                    } catch (IOException e){
+                        //TODO: handle exception e
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeekProgramModel> call, Throwable t) {
+                String error = t.getMessage();
+                //TODO: handle onFailure
+            }
+        });
     }
 
     private void setupView() {

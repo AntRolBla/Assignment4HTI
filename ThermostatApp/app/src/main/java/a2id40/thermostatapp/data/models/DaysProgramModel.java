@@ -14,9 +14,7 @@ public class DaysProgramModel {
     SaturdayModel Saturday;
     SundayModel Sunday;
 
-    public MondayModel getMonday() {
-        return Monday;
-    }
+    public MondayModel getMonday() { return Monday; }
 
     public TuesdayModel getTuesday() {
         return Tuesday;

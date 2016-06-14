@@ -13,4 +13,6 @@ public class WednesdayModel {
     public ArrayList<SwitchModel> getSwitches() {
         return switches;
     }
+
+    public void setSwitches(ArrayList<SwitchModel> switches) { this.switches = switches; }
 }

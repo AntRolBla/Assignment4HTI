@@ -106,7 +106,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){
-                    };
+                    }
                 }
             }
 
