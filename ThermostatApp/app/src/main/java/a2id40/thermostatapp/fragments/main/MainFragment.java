@@ -1,33 +1,21 @@
 package a2id40.thermostatapp.fragments.main;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.io.IOException;
-import java.sql.Time;
-import java.util.Date;
 
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.DayModel;
-import a2id40.thermostatapp.data.models.DayTemperatureModel;
-import a2id40.thermostatapp.data.models.TargetTemperatureModel;
-import a2id40.thermostatapp.data.models.TemperatureModel;
-import a2id40.thermostatapp.data.models.TimeModel;
-import a2id40.thermostatapp.data.models.UpdateResponse;
-import a2id40.thermostatapp.data.models.WeekProgram;
-import a2id40.thermostatapp.data.models.WeekProgramModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
