@@ -112,7 +112,7 @@ public class Helpers {
                 isDay = false;
             }
             for (SwitchModel switchModel : switchModelArray) {
-                endTime = getCorrectEndTime(switchModel.getTime());
+                endTime = subtractOneMinuteOnDate(switchModel.getTime());
                 TimeslotModel timeslotTemp = new TimeslotModel(initialTime, endTime, isDay);
                 timeslotModelArray.add(timeslotTemp);
                 initialTime = switchModel.getTime();
@@ -125,7 +125,7 @@ public class Helpers {
         return timeslotModelArray;
     }
 
-    public Date getCorrectEndTime(Date endTime){
+    public Date subtractOneMinuteOnDate(Date endTime){
         Date tempDate = new Date();
         long miliseconds = endTime.getTime();
         miliseconds = miliseconds - 60000;
@@ -133,12 +133,49 @@ public class Helpers {
         return tempDate;
     }
 
-    public ArrayList<SwitchModel> convertArrayTimeslotsToArraySwitch(ArrayList<TimeslotModel> timeslotModel){
-        ArrayList<SwitchModel> switchModel = new ArrayList<>();
+    public Date addOneMinuteOnDate(Date endTime){
+        Date tempDate = new Date();
+        long miliseconds = endTime.getTime();
+        miliseconds = miliseconds + 60000;
+        tempDate.setTime(miliseconds);
+        return tempDate;
+    }
 
+    public ArrayList<SwitchModel> convertArrayTimeslotsToArraySwitch(ArrayList<TimeslotModel> timeslotModelArray){
+        ArrayList<SwitchModel> switchModelArray = new ArrayList<>();
+        int daysLeft = 5;
+        int nightsLeft = 5;
 
+        Calendar midNightCalendar = Calendar.getInstance();
+        midNightCalendar.set(2016, 5, 5, 0, 0);
+        Date midnightDate = new Date();
+        midnightDate = midNightCalendar.getTime();
 
-        return switchModel;
+        if (timeslotModelArray.size() != 1){
+            int iterator = 0;
+            if (!timeslotModelArray.get(0).getmDay()){
+                iterator = 1;
+            }
+            for (int i = iterator; i < timeslotModelArray.size(); i++){
+                if (timeslotModelArray.get(i).getmDay()){
+                    switchModelArray.add(new SwitchModel(false, true, timeslotModelArray.get(i).getmStarTime()));
+                    daysLeft--;
+                } else {
+                    switchModelArray.add(new SwitchModel(true, true, timeslotModelArray.get(i).getmStarTime()));
+                    nightsLeft--;
+                }
+            }
+        }
+        while (daysLeft != 0){
+            switchModelArray.add(new SwitchModel(false, false, midnightDate));
+            daysLeft--;
+        }
+        while (nightsLeft != 0){
+            switchModelArray.add(new SwitchModel(true, false, midnightDate));
+            nightsLeft--;
+        }
+
+        return switchModelArray;
     }
 
 }

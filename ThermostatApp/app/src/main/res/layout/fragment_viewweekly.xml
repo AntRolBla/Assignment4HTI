@@ -1,11 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingBottom="64dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="64dp">
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="VIEW WEEKLY FRAGMENT"
+        android:layout_height="wrap_content"
+        android:text="Weekly Program"
         android:textSize="30dp"
-        android:gravity="center"/>
+        android:gravity="center" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="20sp"
+                    android:text="Weekdays"/>
+                <Button
+                    android:id="@+id/fragment_viewweekly_main_monday_button"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
+                    android:text="Monday"/>
+                <Button
+                    android:id="@+id/fragment_viewweekly_main_tuesday_button"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
+                    android:text="Tuesday"/>
+                <Button
+                    android:id="@+id/fragment_viewweekly_main_wednesday_button"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
+                    android:text="Wednesday"/>
+                <Button
+                    android:id="@+id/fragment_viewweekly_main_thursday_button"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
+                    android:text="Thursday"/>
+                <Button
+                    android:id="@+id/fragment_viewweekly_main_friday_button"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
+                    android:text="Friday"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="20sp"
+                    android:text="Weekend"/>
+                <Button
+                    android:id="@+id/fragment_viewweekly_main_saturday_button"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
+                    android:text="Saturday"/>
+                <Button
+                    android:id="@+id/fragment_viewweekly_main_sunday_button"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    style="@style/AppButton.Primary"
+                    android:layout_margin="4dp"
+                    android:text="Sunday"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

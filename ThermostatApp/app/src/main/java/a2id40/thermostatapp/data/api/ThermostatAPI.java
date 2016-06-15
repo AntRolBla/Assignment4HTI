@@ -91,7 +91,7 @@ public interface ThermostatAPI {
     @Headers({
             "Accept: application/json",
             "Content-Type: application/json"})
-    @GET("weekProgram")
+    @PUT("weekProgram")
     Call<UpdateResponse> setWeekProgram(
             @Body WeekProgramModel weekProgramModel
     );

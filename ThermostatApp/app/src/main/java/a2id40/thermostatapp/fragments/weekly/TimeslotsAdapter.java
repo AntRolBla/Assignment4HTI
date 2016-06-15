@@ -20,9 +20,11 @@ import butterknife.BindView;
 public class TimeslotsAdapter extends RecyclerView.Adapter<TimeslotsAdapter.TimeslotsViewHolder> {
 
     private ArrayList<TimeslotModel> mTimeslotsList;
+    private TimeslotAdapterInterface mListener;
 
-    public TimeslotsAdapter(ArrayList<TimeslotModel> mTimeslotsList) {
+    public TimeslotsAdapter(ArrayList<TimeslotModel> mTimeslotsList, TimeslotAdapterInterface mListener) {
         this.mTimeslotsList = mTimeslotsList;
+        this.mListener = mListener;
     }
 
     public class TimeslotsViewHolder extends RecyclerView.ViewHolder {
@@ -35,6 +37,12 @@ public class TimeslotsAdapter extends RecyclerView.Adapter<TimeslotsAdapter.Time
             dayNightImageView = (ImageView) view.findViewById(R.id.timeslots_recycler_row_day_night_imageview);
             deleteImageView = (ImageView) view.findViewById(R.id.timeslots_recycler_row_delete_imageview);
         }
+    }
+
+    public void updateTimeslotList(ArrayList<TimeslotModel> timeslotModelArrays){
+        mTimeslotsList.clear();
+        mTimeslotsList.addAll(timeslotModelArrays);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -57,9 +65,7 @@ public class TimeslotsAdapter extends RecyclerView.Adapter<TimeslotsAdapter.Time
         holder.deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTimeslotsList.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, mTimeslotsList.size());
+                mListener.removeTimeslotClicked(mTimeslotsList.get(position));
             }
         });
     }

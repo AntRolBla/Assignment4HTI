@@ -16,6 +16,7 @@ import a2id40.thermostatapp.activities.base.util.ActivityUtils;
 import a2id40.thermostatapp.fragments.help.HelpFragment;
 import a2id40.thermostatapp.fragments.main.MainFragment;
 import a2id40.thermostatapp.fragments.settings.SettingsFragment;
+import a2id40.thermostatapp.fragments.viewweekly.ViewWeeklyDayFragment;
 import a2id40.thermostatapp.fragments.viewweekly.ViewWeeklyFragment;
 import a2id40.thermostatapp.fragments.weekly.AddTimeslotFragment;
 import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
@@ -119,6 +120,19 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction weekDayTransaction = getSupportFragmentManager().beginTransaction();
         weekDayTransaction.replace(R.id.activity_base_container, mWeeklyDayFragment);
         weekDayTransaction.addToBackStack("Week Day Transaction");
+        weekDayTransaction.commit();
+    }
+
+    public void openViewWeeklyDay(int day){
+        Bundle weekDayBundle = new Bundle();
+        weekDayBundle.putInt(WeeklyDayFragment.WEEK_DAY_BUNDLE, day);
+
+        ViewWeeklyDayFragment viewWeeklyDayFragment = new ViewWeeklyDayFragment();
+        viewWeeklyDayFragment.setArguments(weekDayBundle);
+
+        FragmentTransaction weekDayTransaction = getSupportFragmentManager().beginTransaction();
+        weekDayTransaction.replace(R.id.activity_base_container, viewWeeklyDayFragment);
+        weekDayTransaction.addToBackStack("View Week Day Transaction");
         weekDayTransaction.commit();
     }
 
