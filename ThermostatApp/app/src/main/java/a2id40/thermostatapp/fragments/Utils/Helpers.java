@@ -1,6 +1,8 @@
 package a2id40.thermostatapp.fragments.Utils;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import a2id40.thermostatapp.data.models.SwitchModel;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
@@ -68,13 +70,74 @@ public class Helpers {
         return weekProgramModel;
     }
 
-    public ArrayList<TimeslotModel> convertArraySwitchesToArrayTimeslots(ArrayList<SwitchModel> switchModel){
-        ArrayList<TimeslotModel> timeslotModel = new ArrayList<>();
-        return timeslotModel;
+    public ArrayList<TimeslotModel> convertArraySwitchesToArrayTimeslots(ArrayList<SwitchModel> switchModelArray){
+        ArrayList<TimeslotModel> timeslotModelArray = new ArrayList<>();
+
+        Calendar midNightCalendar = Calendar.getInstance();
+        midNightCalendar.set(2016, 5, 5, 0, 0);
+        Calendar elevenFiftyNineCalendar = Calendar.getInstance();
+        elevenFiftyNineCalendar.set(2016, 5, 5, 23, 59);
+        Calendar tempSwitchCalendar = Calendar.getInstance();
+
+        Date initialTime = new Date();
+        Date endTime = new Date();
+        Boolean isDay;
+
+        int controlLoop = switchModelArray.size();
+        int controlInside = 0;
+        for (int i = 0; i < controlLoop; i++){
+            if (!switchModelArray.get(controlInside).isOn()){
+                switchModelArray.remove(controlInside);
+            } else {
+                controlInside++;
+            }
+        }
+
+        if (switchModelArray.size() == 0){ // If all switches are off
+            initialTime = midNightCalendar.getTime();
+            endTime = elevenFiftyNineCalendar.getTime();
+            isDay = false;
+            TimeslotModel timeslot = new TimeslotModel(initialTime, endTime, isDay);
+            timeslotModelArray.add(timeslot);
+
+        } else { // If there is at least one switch on
+            tempSwitchCalendar.setTimeInMillis(switchModelArray.get(0).getTime().getTime()); // Get the hour of first switch
+
+            if (tempSwitchCalendar.get(Calendar.HOUR_OF_DAY) == 0 && tempSwitchCalendar.get(Calendar.MINUTE) == 0){ // If the first switch is at midnight
+                initialTime = tempSwitchCalendar.getTime();
+                isDay = !switchModelArray.get(0).isNight();
+                switchModelArray.remove(0);
+            } else { // If doesnt start at midnight, we still need to put a night starting at midnight
+                initialTime = midNightCalendar.getTime();
+                isDay = false;
+            }
+            for (SwitchModel switchModel : switchModelArray) {
+                endTime = getCorrectEndTime(switchModel.getTime());
+                TimeslotModel timeslotTemp = new TimeslotModel(initialTime, endTime, isDay);
+                timeslotModelArray.add(timeslotTemp);
+                initialTime = switchModel.getTime();
+                isDay = !switchModel.isNight();
+            }
+            endTime = elevenFiftyNineCalendar.getTime();
+            TimeslotModel timeslot = new TimeslotModel(initialTime, endTime, isDay);
+            timeslotModelArray.add(timeslot);
+        }
+        return timeslotModelArray;
+    }
+
+    public Date getCorrectEndTime(Date endTime){
+        Date tempDate = new Date();
+        long miliseconds = endTime.getTime();
+        miliseconds = miliseconds - 60000;
+        tempDate.setTime(miliseconds);
+        return tempDate;
     }
 
     public ArrayList<SwitchModel> convertArrayTimeslotsToArraySwitch(ArrayList<TimeslotModel> timeslotModel){
         ArrayList<SwitchModel> switchModel = new ArrayList<>();
+
+
+
         return switchModel;
     }
 

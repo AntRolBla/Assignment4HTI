@@ -32,6 +32,9 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
     private int mDay;
     private String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
+    private Date mStartTimeDate;
+    private Date mEndTimeDate;
+
     public static final String ADD_TIMESLOT_SUN_LEFT_BUNDLE = "Add timeslot sun left";
 
     //region View Component
@@ -78,17 +81,19 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
         mSaveButton.setOnClickListener(this);
     }
 
-    private void openTimePicker(final boolean isDay){
+    private void openTimePicker(final boolean isStart){
         Calendar mcurrentTime = Calendar.getInstance();
         int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int minute = mcurrentTime.get(Calendar.MINUTE);
         com.wdullaer.materialdatetimepicker.time.TimePickerDialog mTimePicker = com.wdullaer.materialdatetimepicker.time.TimePickerDialog.newInstance(new com.wdullaer.materialdatetimepicker.time.TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(RadialPickerLayout view, int hourOfDay, int minute, int second) {
-                if (isDay){
+                if (isStart){
                     mStartTimeEditText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
+                    startAndEndTimeToDate(true, hourOfDay, minute);
                 } else {
                     mEndTimeEditText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
+                    startAndEndTimeToDate(false, hourOfDay, minute);
                 }
             }
         }, hour, minute, true);
@@ -96,9 +101,16 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
         mTimePicker.show(getActivity().getFragmentManager(), "TimePickerDialog");
     }
 
-    private String saveButtonClicked(){
+    private void startAndEndTimeToDate(boolean isStart, int hour, int minutes){
+        Calendar temp = Calendar.getInstance();
+        temp.set(Calendar.HOUR_OF_DAY, hour);
+        temp.set(Calendar.MINUTE, minutes);
 
-        return "";
+        if (isStart){
+            mStartTimeDate = temp.getTime();
+        } else {
+            mEndTimeDate = temp.getTime();
+        }
     }
 
     @Override
@@ -110,7 +122,7 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fragment_add_timeslot_save_button:
-                ((BaseActivity) getActivity()).addTimeslotToWeeklyDay(new TimeslotModel(new Date(), new Date(), true));
+                ((BaseActivity) getActivity()).addTimeslotToWeeklyDay(new TimeslotModel(mStartTimeDate, mEndTimeDate, true));
                 break;
             case R.id.fragment_add_timeslot_start_time_edittext:
                 openTimePicker(true);
