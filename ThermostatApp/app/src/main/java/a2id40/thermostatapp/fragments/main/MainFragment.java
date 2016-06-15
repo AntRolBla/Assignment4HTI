@@ -20,6 +20,7 @@ import a2id40.thermostatapp.data.models.TargetTemperatureModel;
 import a2id40.thermostatapp.data.models.TemperatureModel;
 import a2id40.thermostatapp.data.models.UpdateResponse;
 import a2id40.thermostatapp.data.models.WeekProgram;
+import a2id40.thermostatapp.data.models.WeekProgramModel;
 import a2id40.thermostatapp.data.models.WeekProgramState;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,6 +84,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private TemperatureModel mTemperatureModel;
     private TargetTemperatureModel mTargetTemperatureModel;
     private WeekProgramState mWeekProgramStateModel;
+    private WeekProgramModel mWeekProgramModel;
 
     // endregion
 
@@ -268,15 +270,17 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         // Set weekly back again: true (PUT)
         putSwitchWeeklyOnOff(true);
 
-        // TODO
+        // TODO - Automatic
         // Get temperature from weekly (GET)
-        // mTemperatureFromWeekly = ...
-
+            // mTemperatureFromWeekly = ...
         // Override target temperature (local)
-        // mTargetTemperature = mTemperatureFromWeekly;
+            // mTargetTemperature = mTemperatureFromWeekly;
+        // Override target temperature on server (PUT)
+            //putTargetTemperature(mTargetTemperature);
 
-        // Override target temperature on server (PUT)                      <- Automatic?
-        putTargetTemperature(mTargetTemperature);
+        // Update local value for temperatures
+        targetTemperatureCaller();
+        currentTemperatureCaller();
     }
 
     // Callers as auxiliar methods  ---------------------------------------------------------------- [Callers]
@@ -403,6 +407,31 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         }
     }
 
+    // Weekly program caller
+    private void weeklyProgramCaller(){
+        final Call<WeekProgramModel> weekProgramCall = APIClient.getClient().getWeekProgram();
+        // makes the request, can have two responses from server
+        weekProgramCall.enqueue(new Callback<WeekProgramModel>() {
+
+            // has to validate is response is success
+            public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
+                if (response.isSuccessful()){
+                    mWeekProgramModel = response.body();
+                    mWeekProgramModel.getWeekProgram().setIsWeekProgramOn(false);
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            public void onFailure(Call<WeekProgramModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
     // Put as auxiliar methods  -------------------------------------------------------------------- [Putters]
 
     // Target temperature PUT
@@ -434,11 +463,9 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
     // Switch the weekly on/off PUT
     private void putSwitchWeeklyOnOff (Boolean state){
-        WeekProgramState weekState = new WeekProgramState(state);
-        Call<UpdateResponse> setIsWeekProgramOn = APIClient.getClient().setWeekProgramState(weekState);
+        Call<UpdateResponse> setIsWeekProgramOn = APIClient.getClient().setWeekProgram(mWeekProgramModel);
         setIsWeekProgramOn.enqueue(new Callback<UpdateResponse>(){
 
-            // ------------------------------------------------------------------------------------- The method does not work
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
                 if (response.isSuccessful() && response.body().isSuccess()){
                     // TODO
@@ -446,7 +473,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
                 } else {
                     // TODO
-                    String s = "Error: ";
+                    String s = "Error";
                     Toast.makeText(getContext(), s, Toast.LENGTH_SHORT).show();
                     try {
                         String onResponse = response.errorBody().string();
