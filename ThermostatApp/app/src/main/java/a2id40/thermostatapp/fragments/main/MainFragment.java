@@ -261,14 +261,16 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         putTargetTemperature(mTargetTemperature);
 
         // Disable weekly switches on server; false (PUT)
-        putSwitchWeeklyOnOff(false);
+        weeklyProgramCallerVacationON();
+        putSwitchWeeklyOnOff();
     }
 
     // Method called when the onVacation switch is changed from ON to OFF
     private void switchOFFVacationModeOnServer(){
 
         // Set weekly back again: true (PUT)
-        putSwitchWeeklyOnOff(true);
+        weeklyProgramCallerVacationOFF();
+        putSwitchWeeklyOnOff();
 
         // TODO - Automatic
         // Get temperature from weekly (GET)
@@ -407,8 +409,33 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         }
     }
 
-    // Weekly program caller
-    private void weeklyProgramCaller(){
+    // Weekly program caller ON (state to true)
+    private void weeklyProgramCallerVacationON(){
+        final Call<WeekProgramModel> weekProgramCall = APIClient.getClient().getWeekProgram();
+        // makes the request, can have two responses from server
+        weekProgramCall.enqueue(new Callback<WeekProgramModel>() {
+
+            // has to validate is response is success
+            public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
+                if (response.isSuccessful()){
+                    mWeekProgramModel = response.body();
+                    mWeekProgramModel.getWeekProgram().setIsWeekProgramOn(true);
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            public void onFailure(Call<WeekProgramModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
+    // Weekly program caller OFF (state to false)
+    private void weeklyProgramCallerVacationOFF(){
         final Call<WeekProgramModel> weekProgramCall = APIClient.getClient().getWeekProgram();
         // makes the request, can have two responses from server
         weekProgramCall.enqueue(new Callback<WeekProgramModel>() {
@@ -462,7 +489,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     // Switch the weekly on/off PUT
-    private void putSwitchWeeklyOnOff (Boolean state){
+    private void putSwitchWeeklyOnOff (){
         Call<UpdateResponse> setIsWeekProgramOn = APIClient.getClient().setWeekProgram(mWeekProgramModel);
         setIsWeekProgramOn.enqueue(new Callback<UpdateResponse>(){
 
