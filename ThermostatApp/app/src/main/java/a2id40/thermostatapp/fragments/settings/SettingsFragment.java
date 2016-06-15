@@ -9,9 +9,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.data.api.APIClient;
+import a2id40.thermostatapp.data.models.DayTemperatureModel;
+import a2id40.thermostatapp.data.models.NightTemperatureModel;
+import a2id40.thermostatapp.data.models.TargetTemperatureModel;
+import a2id40.thermostatapp.data.models.UpdateResponse;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by rafael on 6/5/16.
@@ -50,6 +60,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     //endregion
 
+    // region Variables declaration
+
     double currentDayTemp = 22.2;
     double currentNightTemp = 20.0;
     double currentVacationTemp = 18.8;
@@ -57,6 +69,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     double setDayTemp = 0.00;
     double setNightTemp = 20.0;
     double setVacationTemp = 18.8;
+
+    private DayTemperatureModel mDayTempModel;
+    private NightTemperatureModel mNightTempModel;
+    //private VacationTemperatureModel mVacationTempModel;
+
+    //endregion
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -70,7 +88,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         View root  = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, root);
         // Take data from server
-        // TODO
+        getInformationFromServer();
+        // Setup
         setupView();
         return root;
     }
@@ -181,9 +200,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 // If everything OK, update and show pop up message for feedback to user
                 if (dataChanged && numberPopUps == 0) {
                     // Send changes to sever (override with new values)
-                    if (mEditDayText.getText().length() != 0)       { putNewDayTempValue(); }
-                    if (mEditNightText.getText().length() != 0)     { putNewNightTempValue(); }
-                    if (mEditVacationText.getText().length() != 0)  { putNewVacationTempValue(); }
+                    if (mEditDayText.getText().length() != 0)       { putNewDayTempValue(currentDayTemp); }
+                    if (mEditNightText.getText().length() != 0)     { putNewNightTempValue(currentNightTemp); }
+                    if (mEditVacationText.getText().length() != 0)  { putNewVacationTempValue(currentVacationTemp); }
                     // Pop up message
                     Toast.makeText(getContext(), "Your changes have been saved.", Toast.LENGTH_SHORT).show();
                     // Update hint texts values
@@ -209,20 +228,133 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         return Math.round ( number * 10.0) / 10.0;
     }
 
-    // PUT for the values as auxiliar methods  -----------------------------------------------------
-
-    public void putNewDayTempValue(){
-        // Send currentDayTemp value to server (POST)
-        // setDayTemperature()
+    private void getInformationFromServer(){
+        getDayTemperatureFromServer();
+        getNightTemperatureFromServer();
+        getVacationTemperatureFromServer();
     }
 
-    public void putNewNightTempValue(){
-        // Send currentNightTemp value to server (POST)
-        // setNightTemperature()
+    // Callers as auxiliar methods  ---------------------------------------------------------------- [Callers]
+
+    //Current day temperature caller
+    private void getDayTemperatureFromServer(){
+        Call<DayTemperatureModel> callDayTempModel = APIClient.getClient().getDayTemperature();
+        callDayTempModel.enqueue(new Callback<DayTemperatureModel>() {
+            @Override
+            public void onResponse(Call<DayTemperatureModel> call, Response<DayTemperatureModel> response) {
+                if (response.isSuccessful()){
+                    mDayTempModel = response.body();
+                    currentDayTemp = mDayTempModel.getDayTemperature();
+                    // Update hint texts
+                    setHintTexts();
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DayTemperatureModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
     }
 
-    public void putNewVacationTempValue(){
-        // Send currentVacationTemp value to server (POST)
+    //Current night temperature caller
+    private void getNightTemperatureFromServer(){
+        Call<NightTemperatureModel> callNightTempModel = APIClient.getClient().getNightTemperature();
+        callNightTempModel.enqueue(new Callback<NightTemperatureModel>() {
+            @Override
+            public void onResponse(Call<NightTemperatureModel> call, Response<NightTemperatureModel> response) {
+                if (response.isSuccessful()){
+                    mNightTempModel = response.body();
+                    currentNightTemp = mNightTempModel.getNightTemperature();
+                    // Update hint texts
+                    setHintTexts();
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NightTemperatureModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
+    //Current day temperature caller
+    private void getVacationTemperatureFromServer(){
+        // TODO
+        // getVacationTemperature()                                               <Missing from API>
+        // Update hint texts
+        // setHintTexts();
+    }
+
+    // Put as auxiliar methods  -------------------------------------------------------------------- [Putters]
+
+    // Send currentDayTemp value to server (PUT)
+    private void putNewDayTempValue(Double temperature){
+        DayTemperatureModel dayTemp = new DayTemperatureModel(temperature);
+        Call<UpdateResponse> setDayTemperature = APIClient.getClient().setDayTemperature(dayTemp);
+        setDayTemperature.enqueue(new Callback<UpdateResponse>(){
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    // TODO
+                    // Handle success (no nothing)
+                } else {
+                    // TODO
+                    // Show error message
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){  }
+                }
+            }
+
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                // TODO
+                // Show error message
+            }
+
+        });
+
+    }
+
+    private void putNewNightTempValue(Double temperature){
+        NightTemperatureModel nightTemp = new NightTemperatureModel(temperature);
+        Call<UpdateResponse> setNightTemperature = APIClient.getClient().setNightTemperature(nightTemp);
+        setNightTemperature.enqueue(new Callback<UpdateResponse>(){
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    // TODO
+                    // Handle success (no nothing)
+                } else {
+                    // TODO
+                    // Show error message
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){  }
+                }
+            }
+
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                // TODO
+                // Show error message
+            }
+
+        });
+    }
+
+    private void putNewVacationTempValue(Double temperature){
+        // Send currentVacationTemp value to server (PUT)
         // setVacationTemperature()                                               <Missing from API>
     }
+
 }
