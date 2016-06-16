@@ -9,9 +9,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
+
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.data.api.APIClient;
+import a2id40.thermostatapp.data.models.DayTemperatureModel;
+import a2id40.thermostatapp.data.models.NightTemperatureModel;
+import a2id40.thermostatapp.data.models.TargetTemperatureModel;
+import a2id40.thermostatapp.data.models.TemperatureModel;
+import a2id40.thermostatapp.data.models.UpdateResponse;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by rafael on 6/5/16.
@@ -33,30 +44,32 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     @BindView(R.id.fragment_settings_night_textview)
     TextView mNightTempTextView;
 
-    @BindView(R.id.fragment_settings_vacation_textview)
-    TextView mVacationTempTextView;
-
     @BindView(R.id.fragment_settings_set_day_textview)
     TextView mEditDayText;
 
     @BindView(R.id.fragment_settings_set_night_textview)
     TextView mEditNightText;
 
-    @BindView(R.id.fragment_settings_set_vacation_textview)
-    TextView mEditVacationText;
-
     @BindView(R.id.fragment_settings_save_button)
     TextView mSaveButton;
 
     //endregion
 
-    double currentDayTemp = 22.2;
-    double currentNightTemp = 20.0;
-    double currentVacationTemp = 18.8;
+    // region Variables declaration
 
-    double setDayTemp = 0.00;
-    double setNightTemp = 20.0;
-    double setVacationTemp = 18.8;
+    double currentDayTemp = 22.2;
+    double currentNightTemp = 11.1;
+
+    double setDayTemp = 20.00;
+    double setNightTemp = 11.1;
+
+    private DayTemperatureModel mDayTempModel;
+    private NightTemperatureModel mNightTempModel;
+
+    TemperatureModel mTemperatureModel;
+    double mCurrentTemperature = 10.0;
+
+    //endregion
 
     public static SettingsFragment newInstance() {
         return new SettingsFragment();
@@ -70,7 +83,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         View root  = inflater.inflate(R.layout.fragment_settings, container, false);
         ButterKnife.bind(this, root);
         // Take data from server
-        // TODO
+        getInformationFromServer();
+        // Setup
         setupView();
         return root;
     }
@@ -84,14 +98,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         // Set hint text with current setting for each temperature
         mEditDayText.setHint(currentDayTemp + "");
         mEditNightText.setHint(currentNightTemp + "");
-        mEditVacationText.setHint(currentVacationTemp + "");
     }
 
     private void clearInputValues(){
         // Set input text with empty value for each temperature
         mEditDayText.setText("");
         mEditNightText.setText("");
-        mEditVacationText.setText("");
     }
 
     private void setupButtons() {
@@ -112,13 +124,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 if (mEditDayText.getText().length() > 0) {
                     setDayTemp = Double.parseDouble(mEditDayText.getText().toString());
                     // Limiting to 1 decimal (precision is in 0.1)
-                    setNightTemp = roudToOneDecimal(setNightTemp);
+                    setNightTemp = roundToOneDecimal(setNightTemp);
                     sameDayTemp = (currentDayTemp == setDayTemp);
                     if (!sameDayTemp){   // Only check everything if it is different
                         tempOK = checkTemperatureInRange(setDayTemp);
                         if (!tempOK && numberPopUps == 0) {
                             Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                                Toast.LENGTH_SHORT).show();
+                                    Toast.LENGTH_SHORT).show();
                             numberPopUps++;
                         } else {
                             // Otherwise, we overwrite it
@@ -133,12 +145,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     setNightTemp = Double.parseDouble(mEditNightText.getText().toString());
                     sameNightTemp = (currentNightTemp == setNightTemp);
                     // Limiting to 1 decimal (precision is in 0.1)
-                    setNightTemp = roudToOneDecimal(setNightTemp);
+                    setNightTemp = roundToOneDecimal(setNightTemp);
                     if (!sameNightTemp){   // Only check everything if it is different
                         tempOK = checkTemperatureInRange(setNightTemp);
                         if (!tempOK && numberPopUps == 0) {
                             Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                                Toast.LENGTH_SHORT).show();
+                                    Toast.LENGTH_SHORT).show();
                             numberPopUps++;
                         } else {
                             // Otherwise, we overwrite it
@@ -148,30 +160,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     }
                 }
 
-                // Save values and check temperatures are between 5 and 30, otherwise give a pop up
-                if (mEditVacationText.getText().length() > 0) {
-                    setVacationTemp = Double.parseDouble(mEditVacationText.getText().toString());
-                    // Limiting to 1 decimal (precision is in 0.1)
-                    setVacationTemp = roudToOneDecimal(setVacationTemp);
-                    sameVacationTemp = (currentVacationTemp == setVacationTemp);
-                    if (!sameVacationTemp) {   // Only check everything if it is different
-                        tempOK = checkTemperatureInRange(setVacationTemp);
-                        if (!tempOK && numberPopUps == 0) {
-                            Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                                Toast.LENGTH_SHORT).show();
-                            numberPopUps++;
-                        } else {
-                            // Otherwise, we overwrite it
-                            currentVacationTemp = setVacationTemp;
-                            dataChanged = true;
-                        }
-                    }
-                }
-
                 // In case no changes are introduced
-                if ((mEditDayText.getText().length() == 0 && mEditNightText.getText().length() == 0 &&
-                        mEditVacationText.getText().length() == 0)
-                        || (sameDayTemp || sameNightTemp || sameVacationTemp)) {
+                if ((mEditDayText.getText().length() == 0 && mEditNightText.getText().length() == 0)
+                        || (sameDayTemp || sameNightTemp)) {
                     // Pop up message
                     Toast.makeText(getContext(), "No changes to be saved.", Toast.LENGTH_SHORT).show();
                     // Clear input values
@@ -181,7 +172,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 // If everything OK, update and show pop up message for feedback to user
                 if (dataChanged && numberPopUps == 0) {
                     // Send changes to sever (override with new values)
-                    // TODO
+                    if (mEditDayText.getText().length() != 0)       { putNewDayTempValue(currentDayTemp); }
+                    if (mEditNightText.getText().length() != 0)     { putNewNightTempValue(currentNightTemp); }
                     // Pop up message
                     Toast.makeText(getContext(), "Your changes have been saved.", Toast.LENGTH_SHORT).show();
                     // Update hint texts values
@@ -193,6 +185,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    // Simple checker for temperature values
     private boolean checkTemperatureInRange(double currentTemp) {
         if (currentTemp < MIN_TEMPERATURE || currentTemp > MAX_TEMPERATURE) {
             return false;
@@ -201,7 +194,120 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private double roudToOneDecimal (double number){
+    // For rounding the input values
+    private double roundToOneDecimal (double number){
         return Math.round ( number * 10.0) / 10.0;
     }
+
+    private void getInformationFromServer(){
+        getDayTemperatureFromServer();
+        getNightTemperatureFromServer();
+    }
+
+    // Callers as auxiliar methods  ---------------------------------------------------------------- [Callers]
+
+    //Current day temperature caller
+    private void getDayTemperatureFromServer(){
+        Call<DayTemperatureModel> callDayTempModel = APIClient.getClient().getDayTemperature();
+        callDayTempModel.enqueue(new Callback<DayTemperatureModel>() {
+            @Override
+            public void onResponse(Call<DayTemperatureModel> call, Response<DayTemperatureModel> response) {
+                if (response.isSuccessful()){
+                    mDayTempModel = response.body();
+                    currentDayTemp = mDayTempModel.getDayTemperature();
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            @Override
+            public void onFailure(Call<DayTemperatureModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
+    //Current night temperature caller
+    private void getNightTemperatureFromServer(){
+        Call<NightTemperatureModel> callNightTempModel = APIClient.getClient().getNightTemperature();
+        callNightTempModel.enqueue(new Callback<NightTemperatureModel>() {
+            @Override
+            public void onResponse(Call<NightTemperatureModel> call, Response<NightTemperatureModel> response) {
+                if (response.isSuccessful()){
+                    mNightTempModel = response.body();
+                    currentNightTemp = mNightTempModel.getNightTemperature();
+                } else {
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    };
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NightTemperatureModel> call, Throwable t) {
+                String error = t.getMessage();
+            }
+        });
+    }
+
+    // Put as auxiliar methods  -------------------------------------------------------------------- [Putters]
+
+    // Send currentDayTemp value to server (PUT)
+    private void putNewDayTempValue(Double temperature){
+        DayTemperatureModel dayTemp = new DayTemperatureModel(temperature);
+        Call<UpdateResponse> setDayTemperature = APIClient.getClient().setDayTemperature(dayTemp);
+        setDayTemperature.enqueue(new Callback<UpdateResponse>(){
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    // TODO
+                    // Handle success (no nothing)
+                } else {
+                    // TODO
+                    // Show error message
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){  }
+                }
+            }
+
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                // TODO
+                // Show error message
+            }
+
+        });
+
+    }
+
+    private void putNewNightTempValue(Double temperature){
+        NightTemperatureModel nightTemp = new NightTemperatureModel(temperature);
+        Call<UpdateResponse> setNightTemperature = APIClient.getClient().setNightTemperature(nightTemp);
+        setNightTemperature.enqueue(new Callback<UpdateResponse>(){
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    // TODO
+                    // Handle success (no nothing)
+                } else {
+                    // TODO
+                    // Show error message
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){  }
+                }
+            }
+
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                // TODO
+                // Show error message
+            }
+
+        });
+    }
+
 }

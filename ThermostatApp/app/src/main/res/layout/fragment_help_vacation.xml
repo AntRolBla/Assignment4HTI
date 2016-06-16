@@ -34,9 +34,9 @@
         android:id="@+id/mSpacingOneLinearLayout" />
 
     <TextView
-        android:layout_width="350dp"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
-        android:text="The vacation mode overrides the weekly program temperature and disables the functionality to change the current temperature on the fly in the main page."
+        android:text="The vacation mode overrides the weekly program temperature and disables the functionality to change the target temperature on the fly in the main page."
         android:id="@+id/fragment_help_vacation_description_one_textview"
         android:layout_gravity="center_horizontal"
         android:textSize="20sp"
@@ -50,9 +50,9 @@
         android:id="@+id/mSpacingTwoLinearLayout"></LinearLayout>
 
     <TextView
-        android:layout_width="350dp"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
-        android:text="To set it, access the &apos;Main&apos; option in the menu. There is a slider there to turn it ON or OFF. Simply touch it to initiate the vacation mode if it is activate, or to stop it if it was already running."
+        android:text="To set it, access the &apos;Main&apos; option in the menu. There is a slider there to turn it ON or OFF. It will take the night temperature unless the current temperature set is lower that the night value."
         android:id="@+id/fragment_help_vacation_description_two_textview"
         android:layout_gravity="center_horizontal"
         android:textSize="20sp" />
