@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
+
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.activities.base.util.ActivityUtils;
 import a2id40.thermostatapp.fragments.help.HelpFragment;
@@ -136,10 +138,11 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         weekDayTransaction.commit();
     }
 
-    public void openAddTimeslots(int day, int sunLeft){
+    public void openAddTimeslots(int day, int sunLeft, Timepoint[] timepoints){
         Bundle addTimeslotsBundle = new Bundle();
         addTimeslotsBundle.putInt(WeeklyDayFragment.WEEK_DAY_BUNDLE, day);
         addTimeslotsBundle.putInt(AddTimeslotFragment.ADD_TIMESLOT_SUN_LEFT_BUNDLE, sunLeft);
+        addTimeslotsBundle.putParcelableArray(AddTimeslotFragment.ADD_TIMESLOT_TIMEPOINTS_BUNDLE, timepoints);
 
         AddTimeslotFragment addTimeslotFragment = new AddTimeslotFragment();
         addTimeslotFragment.setArguments(addTimeslotsBundle);

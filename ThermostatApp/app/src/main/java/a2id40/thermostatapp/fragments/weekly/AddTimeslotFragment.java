@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -30,12 +31,16 @@ import butterknife.ButterKnife;
 public class AddTimeslotFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     private int mDay;
+    private Timepoint[] mTimepoints;
     private String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
     private Date mStartTimeDate;
     private Date mEndTimeDate;
+    private int mStartHour = 0;
+    private int mStartMinute = 0;
 
     public static final String ADD_TIMESLOT_SUN_LEFT_BUNDLE = "Add timeslot sun left";
+    public static final String ADD_TIMESLOT_TIMEPOINTS_BUNDLE = "Add timepoints array";
 
     //region View Component
     @BindView(R.id.fragment_add_timeslot_week_day_textview)
@@ -66,6 +71,7 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
         Bundle addTimeslotBundle = this.getArguments();
         mDay = addTimeslotBundle.getInt(WeeklyDayFragment.WEEK_DAY_BUNDLE);
         mSunLeftTextView.setText(String.format("%dx", addTimeslotBundle.getInt(ADD_TIMESLOT_SUN_LEFT_BUNDLE)));
+        mTimepoints = (Timepoint[]) addTimeslotBundle.getParcelableArray(ADD_TIMESLOT_TIMEPOINTS_BUNDLE);
         setupView();
         return root;
     }
@@ -91,6 +97,8 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
                 if (isStart){
                     mStartTimeEditText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                     startAndEndTimeToDate(true, hourOfDay, minute);
+                    mStartHour = hourOfDay;
+                    mStartMinute = minute;
                 } else {
                     mEndTimeEditText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                     startAndEndTimeToDate(false, hourOfDay, minute);
@@ -98,6 +106,10 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
             }
         }, hour, minute, true);
         mTimePicker.setThemeDark(true);
+        mTimePicker.setSelectableTimes(mTimepoints);
+        if (!isStart){
+            mTimePicker.setMinTime(new Timepoint(mStartHour, mStartMinute+1));
+        }
         mTimePicker.show(getActivity().getFragmentManager(), "TimePickerDialog");
     }
 
