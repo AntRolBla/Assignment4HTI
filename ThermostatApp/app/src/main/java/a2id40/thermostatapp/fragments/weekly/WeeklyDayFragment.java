@@ -142,7 +142,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
 
         updatedTimeslotArray = updateTimeslotWithAdded(newTimeslotModel); // Updated array with add timeslot
         updatedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotArray); // Updated switch
-        mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, updatedSwitch); // Update mWeekProgramModel
+        mWeekProgramModel = mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, updatedSwitch); // Update mWeekProgramModel
 
         Call<UpdateResponse> callUpdateWeekProgramModel = APIClient.getClient().setWeekProgram(mWeekProgramModel);
         callUpdateWeekProgramModel.enqueue(new Callback<UpdateResponse>() {
@@ -152,6 +152,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
                     mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
                     mTimeslotsAdapter.updateTimeslotList(mTimeslotsArray);
+                    mTimeslotsAdapter.notifyDataSetChanged();
                 } else {
                     try {
                         String onResponse = response.errorBody().string();
@@ -365,6 +366,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
                     mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
                     mTimeslotsAdapter.updateTimeslotList(mTimeslotsArray);
+                    mTimeslotsAdapter.notifyDataSetChanged();
                 } else { // With error: Undo modification on mWeekProgram using mTimeslotArray
                     try {
                         String onResponse = response.errorBody().string();

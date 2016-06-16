@@ -42,7 +42,7 @@ public class TimeslotsAdapter extends RecyclerView.Adapter<TimeslotsAdapter.Time
     public void updateTimeslotList(ArrayList<TimeslotModel> timeslotModelArrays){
         mTimeslotsList.clear();
         mTimeslotsList.addAll(timeslotModelArrays);
-        notifyDataSetChanged();
+//        notifyDataSetChanged();
     }
 
     @Override
