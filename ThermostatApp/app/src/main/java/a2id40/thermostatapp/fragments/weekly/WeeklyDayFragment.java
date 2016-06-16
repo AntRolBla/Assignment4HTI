@@ -411,58 +411,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         }
     }
 
-    private Timepoint[] createAvailableHoursTimepointArray2(ArrayList<TimeslotModel> timeslotsArray){
-        ArrayList<Timepoint> timePointArrayList = new ArrayList<>();
-        ArrayList<TimeslotModel> arrayOnlyWithDayTimeslots = new ArrayList<>();
-        Calendar temp = Calendar.getInstance();
-        int initialHour;
-        int initialMinute;
-        int finalHour;
-        int finalMinute;
-        ArrayList<Integer> indexToRemoveList = new ArrayList<>();
-
-        arrayOnlyWithDayTimeslots = getOnlyDayTimeslots(timeslotsArray);
-
-        for (int hour = 0; hour < 24 ; hour++){
-            for (int minute = 0; minute < 60; minute++){
-                timePointArrayList.add(new Timepoint(hour, minute));
-            }
-        }
-
-        for (TimeslotModel timeslot : arrayOnlyWithDayTimeslots) {
-            temp.setTime(timeslot.getmStarTime());
-            initialHour = temp.get(Calendar.HOUR_OF_DAY);
-            initialMinute = temp.get(Calendar.MINUTE);
-            temp.setTime(timeslot.getmEndTime());
-            finalHour = temp.get(Calendar.HOUR_OF_DAY);
-            finalMinute = temp.get(Calendar.MINUTE);
-
-            if (finalHour != initialHour){
-                for (int min = finalMinute; min >= 0; min--){
-                    timePointArrayList.remove(finalHour*60+min);
-                }
-                for (int hour = finalHour-1; hour > initialHour; hour--){
-                    int min = 59;
-                    while (min >= 0){
-                        timePointArrayList.remove(hour*60+min);
-                    }
-                }
-                for (int min = 59; min >= initialMinute; min--){
-                    timePointArrayList.remove(initialHour*60+min);
-                }
-            } else {
-                for (int min = finalMinute; min >= initialMinute; min--){
-                    timePointArrayList.remove(finalHour*60+min);
-                }
-            }
-        }
-
-        Timepoint[] timePointArray = new Timepoint[timePointArrayList.size()];
-        timePointArray = timePointArrayList.toArray(timePointArray);
-
-        return timePointArray;
-    }
-
     private Timepoint[] createAvailableHoursTimepointArray(ArrayList<TimeslotModel> timeslotsModelArray){
         ArrayList<TimeslotModel> arrayOnlyWithNight = new ArrayList<>();
         ArrayList<Timepoint> timePointsArrayList = new ArrayList<>();
