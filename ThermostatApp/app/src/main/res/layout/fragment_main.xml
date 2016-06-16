@@ -16,7 +16,7 @@
         android:id="@+id/fragment_main_info_textview"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:singleLine="false"
         android:text="New text" />
 
@@ -42,7 +42,8 @@
             android:text="@string/fragment_main_minus1_label"
             android:id="@+id/fragment_main_minus1_button"
             android:clickable="true"
-            android:textSize="17sp"/>
+            android:textSize="17sp"
+            android:enabled="true" />
 
         <Space
             android:layout_width="0dp"
@@ -114,7 +115,8 @@
             android:id="@+id/fragment_main_vacation_switch"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.36"
-            android:checked="false" />
+            android:checked="false"
+            android:enabled="true" />
     </LinearLayout>
 
 
