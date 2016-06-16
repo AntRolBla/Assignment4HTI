@@ -37,8 +37,8 @@ public class TimeslotModel {
     }
 
     public String getmHourTimeslot() {
-        String mStartTimeString = new SimpleDateFormat("hh:mm").format(mStarTime);
-        String mEndTimeString = new SimpleDateFormat("hh:mm").format(mEndTime);
+        String mStartTimeString = new SimpleDateFormat("HH:mm").format(mStarTime);
+        String mEndTimeString = new SimpleDateFormat("HH:mm").format(mEndTime);
         mHourTimeslot = mStartTimeString + " - " + mEndTimeString;
         return mHourTimeslot;
     }

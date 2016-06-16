@@ -16,6 +16,8 @@ import java.io.IOException;
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.DayModel;
+import a2id40.thermostatapp.data.models.DayTemperatureModel;
+import a2id40.thermostatapp.data.models.UpdateResponse;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -106,13 +108,37 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){
-                    };
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<DayModel> call, Throwable t) {
                 String error = t.getMessage();
+            }
+        });
+    }
+
+    private void exampleOfPutCall(){
+        DayTemperatureModel temp = new DayTemperatureModel(27.2);
+        Call<UpdateResponse> setDayTemp = APIClient.getClient().setDayTemperature(temp);
+        setDayTemp.enqueue(new Callback<UpdateResponse>() {
+            @Override
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    //TODO: treat success
+                } else {
+                    //TODO: treat error
+                    try {
+                        String onResponse = response.errorBody().string();
+                    } catch (IOException e){
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                //TODO: treat failure
             }
         });
     }

@@ -10,8 +10,7 @@ public class ThursdayModel {
 
     ArrayList<SwitchModel> switches;
 
-    public ArrayList<SwitchModel> getSwitches() {
+    public ArrayList<SwitchModel> getSwitches() { return switches; }
 
-        return switches;
-    }
+    public void setSwitches(ArrayList<SwitchModel> switches) { this.switches = switches; }
 }
