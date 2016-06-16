@@ -1,5 +1,6 @@
 package a2id40.thermostatapp.fragments.main;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -88,8 +89,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private WeekProgramState mWeekProgramStateModel;
     private WeekProgramModel mWeekProgramModel;
     private NightTemperatureModel mNightTempModel;
-    private final Handler mHandler = new Handler();
-    private Thread mThreadUpdater;
 
     // endregion
 
@@ -103,6 +102,31 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         View root  = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, root);
         setupView();
+
+        // Thread for updating the temperature values
+        final Activity act = this.getActivity();
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(250);
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                currentTemperatureCaller();
+                                targetTemperatureCaller();
+                                setupTexts();
+                                switchState();
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+        t.start();
+
         return root;
     }
 
@@ -143,12 +167,14 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     // Method for getting the switch state at start (ON/OFF)
-    private void switchState(){                         // It enters it but does not update anything
+    private void switchState(){
         if (mSwitchState) {
             mVacationSwitch.setChecked(true);
+            //mInfoTextView.setBackgroundColor(Color.RED);
         } else {
             mVacationSwitch.setChecked(false);
-            changeTemperatureAllButtonsEnable(false);
+            //changeTemperatureAllButtonsEnable(false);
+            //mInfoTextView.setBackgroundColor(Color.BLUE);
        }
     }
 
@@ -157,7 +183,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         // Update on screen texts
         setupTexts();
         // Update value of current temperature to server every time we change it
-        updateTemperatureToServer(mTargetTemperature);
+        putTargetTemperature(mTargetTemperature);
         // Update the current temperature
         currentTemperatureCaller();
         // Update on screen texts
@@ -185,32 +211,24 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.fragment_main_minus1_button:
-                if (!mSwitchState) { changeTemperature(-1.0);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (!mSwitchState) { changeTemperature(-1.0); }
+                else { onClickButtonsOnVacation(); }
                 break;
             case R.id.fragment_main_minus01_button:
-                if (!mSwitchState) { changeTemperature(-0.1);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (!mSwitchState) { changeTemperature(-0.1); }
+                else { onClickButtonsOnVacation(); }
                 break;
             case R.id.fragment_main_plus01_button:
-                if (!mSwitchState) { changeTemperature(0.1);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (!mSwitchState) { changeTemperature(0.1); }
+                else { onClickButtonsOnVacation(); }
                 break;
             case R.id.fragment_main_plus1_button:
-                if (!mSwitchState) { changeTemperature(1.0);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (!mSwitchState) { changeTemperature(1.0); }
+                else { onClickButtonsOnVacation(); }
                 break;
             // Switch functionalities
             case R.id.fragment_main_vacation_switch:
-                if (mVacationSwitch.isChecked() && !mSwitchState) {
+                if (mVacationSwitch.isChecked()) {
                     // Override current temperature, set information to server
                     switchONVacationModeOnServer();
                     // Disable all 4 buttons and set the switch state to active
@@ -221,7 +239,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     Toast.makeText(getContext(), "The vacation mode is now enabled, all temperatures are overridden.",
                             Toast.LENGTH_SHORT).show();
 
-                } else if (!mVacationSwitch.isChecked() && mSwitchState) {
+                } else {
                     // Set temperature from weekly (day or night)
                     switchOFFVacationModeOnServer();
                     // Make available the buttons that can be used and set the switch state to non active
@@ -258,12 +276,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         changeTemperatureNegativeButtonsEnable(state);
     }
 
-    // Method called everytime we change the temperature value through the buttons
-    private void updateTemperatureToServer(double temperature){
-        // Update the server value for target temperature (POST)
-        putTargetTemperature(temperature);
-    }
-
     // Method called when the onVacation switch is changed from OFF to ON
     private void switchONVacationModeOnServer(){
         // Get onVacation temperature value
@@ -273,6 +285,8 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         currentTemperatureCaller();
         mTargetTemperature = mOnVacationTemperature;
         setupTexts();
+
+        //Toast.makeText(getContext(), "I got here!", Toast.LENGTH_SHORT).show();
 
         // Override target temperature on sever (PUT)
         putTargetTemperature(mTargetTemperature);
@@ -287,6 +301,8 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         // Set weekly back again (PUT)
         weeklyProgramCallerVacationOFF();
         putSwitchWeeklyOnOff();
+
+        //Toast.makeText(getContext(), "And here!", Toast.LENGTH_SHORT).show();
 
         // Update local value for temperatures
         targetTemperatureCaller();
@@ -373,6 +389,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     mWeekProgramStateModel = response.body(); // getting the response into the model variable
                     mSwitchState = !(mWeekProgramStateModel.isWeekProgramOn()); // passing to String variable
                     Double a = getTemperatureInRange(mTargetTemperature, 0.0);
+                    switchState();
                 } else {
                     try {
                         String onResponse = response.errorBody().string();
