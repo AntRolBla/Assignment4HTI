@@ -6,12 +6,12 @@ package a2id40.thermostatapp.data.models;
 
 public class WeekProgram {
 
-    boolean state;
+    String state;
 
     DaysProgramModel days;
 
     public boolean isWeekProgramOn() {
-        return state;
+        return state.equals("on") ? true : false;
     }
 
     public DaysProgramModel getDays() {
@@ -19,6 +19,6 @@ public class WeekProgram {
     }
 
     public void setIsWeekProgramOn(boolean isWeekProgramOn) {
-        this.state = isWeekProgramOn;
+        this.state = isWeekProgramOn ? "on" : "off";
     }
 }
