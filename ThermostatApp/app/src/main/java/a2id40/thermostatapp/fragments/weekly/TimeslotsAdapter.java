@@ -65,7 +65,7 @@ public class TimeslotsAdapter extends RecyclerView.Adapter<TimeslotsAdapter.Time
         holder.deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.removeTimeslotClicked(mTimeslotsList.get(position));
+                mListener.removeTimeslotClicked(position);
             }
         });
     }

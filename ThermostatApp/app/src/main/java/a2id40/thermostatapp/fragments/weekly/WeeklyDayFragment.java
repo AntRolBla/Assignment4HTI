@@ -135,18 +135,14 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         mAddTimeslotButton.setOnClickListener(this);
     }
 
+    // Called by BaseActivity when returning from AddTimeslotFragment
     public void getTimeslotFromAddTimeslot(TimeslotModel newTimeslotModel){
         ArrayList<TimeslotModel> updatedTimeslotArray = new ArrayList<>();
         ArrayList<SwitchModel> updatedSwitch = new ArrayList<>();
 
-        updatedTimeslotArray = updateTimeslotWithAdded(newTimeslotModel);
-        updatedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotArray);
-        mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, updatedSwitch);
-
-        Gson gson = new GsonBuilder()
-                .setDateFormat("HH:mm")
-                .create();
-        String trial = gson.toJson(mWeekProgramModel);
+        updatedTimeslotArray = updateTimeslotWithAdded(newTimeslotModel); // Updated array with add timeslot
+        updatedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotArray); // Updated switch
+        mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, updatedSwitch); // Update mWeekProgramModel
 
         Call<UpdateResponse> callUpdateWeekProgramModel = APIClient.getClient().setWeekProgram(mWeekProgramModel);
         callUpdateWeekProgramModel.enqueue(new Callback<UpdateResponse>() {
@@ -232,6 +228,43 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         return updatedTimeslotsArray;
     }
 
+    private ArrayList<TimeslotModel> updateTimeslotWithRemoved(int position){
+        ArrayList<TimeslotModel> updatedTimeslotArray = new ArrayList<>();
+
+        updatedTimeslotArray = copyTimeslotsArray(mTimeslotsArray);
+        if (position != 0){
+            if (position != updatedTimeslotArray.size() - 1){ // IN the middle
+                updatedTimeslotArray.get(position - 1).setmEndTime(updatedTimeslotArray.get(position+1).getmEndTime());
+                updatedTimeslotArray.remove(position+1);
+                updatedTimeslotArray.remove(position);
+            } else { // If it is in the last position
+                updatedTimeslotArray.get(position-1).setmEndTime(updatedTimeslotArray.get(position).getmEndTime());
+                updatedTimeslotArray.remove(position);
+            }
+        } else { // If it is in the first position
+            updatedTimeslotArray.get(position+1).setmStarTime(updatedTimeslotArray.get(position).getmStarTime());
+            updatedTimeslotArray.remove(position);
+        }
+
+        return updatedTimeslotArray;
+    }
+
+    private ArrayList<TimeslotModel> copyTimeslotsArray(ArrayList<TimeslotModel> timeslotModelArray){
+        ArrayList<TimeslotModel> timeslotModelCopyArray = new ArrayList<>();
+        Date initialTime = new Date();
+        Date endTime = new Date();
+        Boolean isDay;
+
+        for (TimeslotModel timeslotModel : timeslotModelArray) {
+            initialTime = timeslotModel.getmStarTime();
+            endTime = timeslotModel.getmEndTime();
+            isDay = timeslotModel.getmDay();
+            timeslotModelCopyArray.add(new TimeslotModel(initialTime, endTime, isDay));
+        }
+
+        return timeslotModelCopyArray;
+    }
+
     private ArrayList<TimeslotModel> getOnlyDayTimeslots(ArrayList<TimeslotModel> arrayWithAllTimeslots){
         ArrayList<TimeslotModel> arrayOnlyWithDay = new ArrayList<>();
 
@@ -314,7 +347,42 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     }
 
     @Override
-    public void removeTimeslotClicked(TimeslotModel clickedTimeslot) {
+    public void removeTimeslotClicked(int position) {
+        ArrayList<TimeslotModel> updatedTimeslotWithRemovedArray = new ArrayList<>();
+        ArrayList<SwitchModel> updatedWithRemovedSwitch = new ArrayList<>();
 
+        updatedTimeslotWithRemovedArray = updateTimeslotWithRemoved(position); // Get array without position selected
+        updatedWithRemovedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotWithRemovedArray); // Get array of switches updated
+        mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, updatedWithRemovedSwitch); // Update week program model
+
+        // Put new program model
+        Call<UpdateResponse> callUpdateWeekProgramModel = APIClient.getClient().setWeekProgram(mWeekProgramModel);
+        callUpdateWeekProgramModel.enqueue(new Callback<UpdateResponse>() {
+            @Override
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+                // In case of success, update mTimslotArray, mSwitchesArray, mTimeslotAdapter
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
+                    mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
+                    mTimeslotsAdapter.updateTimeslotList(mTimeslotsArray);
+                } else { // With error: Undo modification on mWeekProgram using mTimeslotArray
+                    try {
+                        String onResponse = response.errorBody().string();
+                        //TODO: handle notSuccessful
+                    } catch (IOException e){
+                        //TODO: handle exception e
+                    }
+                }
+            }
+
+            // With error: Undo modification on mWeekProgram using mTimeslotArray
+            @Override
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                String error = t.getMessage();
+                //TODO: handle onFailure
+            }
+        });
+
+        int a = 3;
     }
 }

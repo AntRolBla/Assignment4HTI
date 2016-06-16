@@ -109,7 +109,7 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     }
 
     @Override
-    public void removeTimeslotClicked(TimeslotModel clickedTimeslot) {
+    public void removeTimeslotClicked(int position) {
 
     }
 }
