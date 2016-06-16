@@ -51,6 +51,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     private int mNumberSunLeft = 5;
     private ArrayList<TimeslotModel> mTimeslotsArray;
     private Helpers mHelper = new Helpers();
+    private boolean mIsInitialSetup = true;
 
     // Variable to store data from server
     private WeekProgramModel mWeekProgramModel;
@@ -86,7 +87,12 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         ButterKnife.bind(this, root);
         Bundle weekDayBundle = this.getArguments();
         mDay = weekDayBundle.getInt(WEEK_DAY_BUNDLE);
-        setupData();
+        if (mIsInitialSetup) {
+            setupData();
+            mIsInitialSetup = false;
+        } else {
+            setupView();
+        }
 
         return root;
     }
