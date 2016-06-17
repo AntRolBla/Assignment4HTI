@@ -29,6 +29,7 @@ import a2id40.thermostatapp.data.models.UpdateResponse;
 import a2id40.thermostatapp.data.models.WeekProgram;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
 import a2id40.thermostatapp.fragments.Utils.Helpers;
+import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +53,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     private TimeslotsAdapter mTimeslotsAdapter;
     private ArrayList<TimeslotModel> mTimeslotsArray;
     private Helpers mHelper = new Helpers();
+    private SnackBarHelper mSnackBarHelper = new SnackBarHelper();
     private boolean mIsInitialSetup= true;
 
     private int mNumberDayLeft;
@@ -115,6 +117,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
                     ((BaseActivity) getActivity()).hideLoadingScreen();
+                    ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
                     try {
                         String onResponse = response.errorBody().string();
                         //TODO: handle notSuccessful
@@ -128,6 +131,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             public void onFailure(Call<WeekProgramModel> call, Throwable t) {
                 String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
+                ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
                 //TODO: handle onFailure
             }
         });
@@ -165,50 +169,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
 
     private void setupButtons() {
         mAddTimeslotButton.setOnClickListener(this);
-    }
-
-    // Called by BaseActivity when returning from AddTimeslotFragment
-    public void getTimeslotFromAddTimeslot(TimeslotModel newTimeslotModel){
-        ArrayList<TimeslotModel> updatedTimeslotArray = new ArrayList<>();
-        ArrayList<SwitchModel> updatedSwitch = new ArrayList<>();
-
-        ((BaseActivity) getActivity()).showLoadingScreen();
-
-        updatedTimeslotArray = updateTimeslotWithAdded(newTimeslotModel); // Updated array with add timeslot
-        updatedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotArray); // Updated switch
-        mWeekProgramModel = mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, updatedSwitch); // Update mWeekProgramModel
-
-        Call<UpdateResponse> callUpdateWeekProgramModel = APIClient.getClient().setWeekProgram(mWeekProgramModel);
-        callUpdateWeekProgramModel.enqueue(new Callback<UpdateResponse>() {
-            @Override
-            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
-                if (response.isSuccessful() && response.body().isSuccess()){
-                    mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
-                    mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
-                    mTimeslotsAdapter.updateTimeslotList(mTimeslotsArray);
-                    mTimeslotsAdapter.notifyDataSetChanged();
-                    setNumberOfDaysNightsLeft(mTimeslotsArray);
-                    setupNumberDayNightViewAndButton();
-                    setupAddTimeslotButton();
-                    ((BaseActivity) getActivity()).hideLoadingScreen();
-                } else {
-                    ((BaseActivity) getActivity()).hideLoadingScreen();
-                    try {
-                        String onResponse = response.errorBody().string();
-                        //TODO: handle notSuccessful
-                    } catch (IOException e){
-                        //TODO: handle exception e
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                String error = t.getMessage();
-                ((BaseActivity) getActivity()).hideLoadingScreen();
-                //TODO: handle onFailure
-            }
-        });
     }
 
     private ArrayList<TimeslotModel> updateTimeslotWithAdded(TimeslotModel newTimeslotModel){
@@ -526,6 +486,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else { // With error: Undo modification on mWeekProgram using mTimeslotArray
                     ((BaseActivity) getActivity()).hideLoadingScreen();
+                    mSnackBarHelper.showErrorOnRemovingTimeslot(getView());
                     try {
                         String onResponse = response.errorBody().string();
                         //TODO: handle notSuccessful
@@ -540,8 +501,56 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
+                mSnackBarHelper.showErrorOnRemovingTimeslot(getView());
                 //TODO: handle onFailure
             }
         });
     }
+
+    // Called by BaseActivity when returning from AddTimeslotFragment
+    public void getTimeslotFromAddTimeslot(TimeslotModel newTimeslotModel){
+        ArrayList<TimeslotModel> updatedTimeslotArray = new ArrayList<>();
+        ArrayList<SwitchModel> updatedSwitch = new ArrayList<>();
+
+        ((BaseActivity) getActivity()).showLoadingScreen();
+
+        updatedTimeslotArray = updateTimeslotWithAdded(newTimeslotModel); // Updated array with add timeslot
+        updatedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotArray); // Updated switch
+        mWeekProgramModel = mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, updatedSwitch); // Update mWeekProgramModel
+
+        Call<UpdateResponse> callUpdateWeekProgramModel = APIClient.getClient().setWeekProgram(mWeekProgramModel);
+        callUpdateWeekProgramModel.enqueue(new Callback<UpdateResponse>() {
+            @Override
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
+                    mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
+                    mTimeslotsAdapter.updateTimeslotList(mTimeslotsArray);
+                    mTimeslotsAdapter.notifyDataSetChanged();
+                    setNumberOfDaysNightsLeft(mTimeslotsArray);
+                    setupNumberDayNightViewAndButton();
+                    setupAddTimeslotButton();
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
+                } else {
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
+                    mSnackBarHelper.showErrorOnAddingTimeslot(getView());
+                    try {
+                        String onResponse = response.errorBody().string();
+                        //TODO: handle notSuccessful
+                    } catch (IOException e){
+                        //TODO: handle exception e
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                mSnackBarHelper.showErrorOnAddingTimeslot(getView());
+                //TODO: handle onFailure
+            }
+        });
+    }
+
 }

@@ -17,6 +17,7 @@ import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.SwitchModel;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
 import a2id40.thermostatapp.fragments.Utils.Helpers;
+import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
 import a2id40.thermostatapp.fragments.weekly.TimeslotAdapterInterface;
 import a2id40.thermostatapp.fragments.weekly.TimeslotsAdapter;
@@ -36,6 +37,7 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     private TimeslotsAdapter mTimeslotsAdapter;
     private ArrayList<TimeslotModel> mTimeslotsArray;
     private Helpers mHelper = new Helpers();
+    private SnackBarHelper mSnackBarHelper = new SnackBarHelper();
 
     // Variable to store data from server
     private WeekProgramModel mWeekProgramModel;
@@ -85,6 +87,7 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
                     ((BaseActivity) getActivity()).hideLoadingScreen();
+                    ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
                     try {
                         String onResponse = response.errorBody().string();
                         //TODO: handle notSuccessful
@@ -98,6 +101,7 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
             public void onFailure(Call<WeekProgramModel> call, Throwable t) {
                 String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
+                ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
                 //TODO: handle onFailure
             }
         });

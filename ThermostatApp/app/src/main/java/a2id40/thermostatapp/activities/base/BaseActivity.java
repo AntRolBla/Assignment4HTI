@@ -17,6 +17,7 @@ import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.activities.base.util.ActivityUtils;
+import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import a2id40.thermostatapp.fragments.help.HelpFragment;
 import a2id40.thermostatapp.fragments.main.MainFragment;
 import a2id40.thermostatapp.fragments.settings.SettingsFragment;
@@ -37,6 +38,7 @@ import butterknife.ButterKnife;
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private WeeklyDayFragment mWeeklyDayFragment;
+    private SnackBarHelper mSnackBarHelper = new SnackBarHelper();
 
     @BindView(R.id.activity_base_toolbar)
     Toolbar mToolbar;
@@ -171,5 +173,10 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     public void addTimeslotToWeeklyDay(TimeslotModel timeslotModel){
         getSupportFragmentManager().popBackStack();
         mWeeklyDayFragment.getTimeslotFromAddTimeslot(timeslotModel);
+    }
+
+    public void goBackAddCallErrorSnackBar(){
+        getSupportFragmentManager().popBackStack();
+        mSnackBarHelper.showErrorSnackBar(mDrawerLayout);
     }
 }

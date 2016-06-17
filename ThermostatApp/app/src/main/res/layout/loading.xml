@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:clickable="true"
     android:visibility="gone"
-    android:background="#BEC1C2"
+    android:background="#F3F3F3"
     android:alpha="0.9">
 
     <ProgressBar
