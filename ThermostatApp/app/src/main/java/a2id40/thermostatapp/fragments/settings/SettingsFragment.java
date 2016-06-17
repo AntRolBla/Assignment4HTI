@@ -2,6 +2,7 @@ package a2id40.thermostatapp.fragments.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -264,11 +265,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
 
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // TODO
-                    // Handle success (no nothing)
+                    // If success, do nothing
                 } else {
-                    // TODO
-                    // Show error message
+                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                            Snackbar.LENGTH_LONG).show();
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){  }
@@ -276,8 +276,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                // TODO
-                // Show error message
+                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                        Snackbar.LENGTH_LONG).show();
             }
 
         });
@@ -291,11 +291,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
 
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // TODO
-                    // Handle success (no nothing)
+                    // If success, do nothing
                 } else {
-                    // TODO
-                    // Show error message
+                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                            Snackbar.LENGTH_LONG).show();
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){  }
@@ -303,8 +302,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                // TODO
-                // Show error message
+                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                        Snackbar.LENGTH_LONG).show();
             }
 
         });
