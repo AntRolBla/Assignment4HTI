@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.SwitchModel;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
@@ -70,6 +71,8 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     }
 
     private void setupData(){
+        ((BaseActivity) getActivity()).showLoadingScreen();
+
         Call<WeekProgramModel> callWeekProgramModel = APIClient.getClient().getWeekProgram();
         callWeekProgramModel.enqueue(new Callback<WeekProgramModel>() {
             @Override
@@ -79,7 +82,9 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
                     mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
                     mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
                     setupView();
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                     try {
                         String onResponse = response.errorBody().string();
                         //TODO: handle notSuccessful
@@ -92,6 +97,7 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
             @Override
             public void onFailure(Call<WeekProgramModel> call, Throwable t) {
                 String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 //TODO: handle onFailure
             }
         });
@@ -103,7 +109,7 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     }
 
     private void setupRecycler(){
-        mTimeslotsAdapter = new TimeslotsAdapter(mTimeslotsArray, this);
+        mTimeslotsAdapter = new TimeslotsAdapter(mTimeslotsArray, this, true);
         mTimeslotsRecycler.setAdapter(mTimeslotsAdapter);
         mTimeslotsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }

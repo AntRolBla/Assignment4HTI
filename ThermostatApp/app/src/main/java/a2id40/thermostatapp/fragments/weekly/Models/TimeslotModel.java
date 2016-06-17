@@ -46,4 +46,8 @@ public class TimeslotModel {
     public Boolean getmDay() {
         return mDay;
     }
+
+    public void setmDay(Boolean mDay) {
+        this.mDay = mDay;
+    }
 }

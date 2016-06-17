@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
@@ -44,6 +46,9 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     @BindView(R.id.activity_base_navView)
     NavigationView mNavigationView;
+
+    @BindView(R.id.activity_base_loading)
+    FrameLayout mLoading;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,6 +117,15 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    public void showLoadingScreen(){
+        mLoading.setVisibility(View.VISIBLE);
+    }
+
+    public void hideLoadingScreen(){
+        mLoading.setVisibility(View.GONE);
+    }
+
+
     public void openWeeklyDay(int day) {
         Bundle weekDayBundle = new Bundle();
         weekDayBundle.putInt(WeeklyDayFragment.WEEK_DAY_BUNDLE, day);
@@ -138,11 +152,12 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         weekDayTransaction.commit();
     }
 
-    public void openAddTimeslots(int day, int sunLeft, Timepoint[] timepoints){
+    public void openAddTimeslots(int day, int sunLeft, Timepoint[] timepointsInitial, Timepoint[] timepointsEnd){
         Bundle addTimeslotsBundle = new Bundle();
         addTimeslotsBundle.putInt(WeeklyDayFragment.WEEK_DAY_BUNDLE, day);
         addTimeslotsBundle.putInt(AddTimeslotFragment.ADD_TIMESLOT_SUN_LEFT_BUNDLE, sunLeft);
-        addTimeslotsBundle.putParcelableArray(AddTimeslotFragment.ADD_TIMESLOT_TIMEPOINTS_BUNDLE, timepoints);
+        addTimeslotsBundle.putParcelableArray(AddTimeslotFragment.ADD_TIMESLOT_TIMEPOINTS_INITIAL_BUNDLE, timepointsInitial);
+        addTimeslotsBundle.putParcelableArray(AddTimeslotFragment.ADD_TIMESLOT_TIMEPOINTS_END_BUNDLE, timepointsEnd);
 
         AddTimeslotFragment addTimeslotFragment = new AddTimeslotFragment();
         addTimeslotFragment.setArguments(addTimeslotsBundle);

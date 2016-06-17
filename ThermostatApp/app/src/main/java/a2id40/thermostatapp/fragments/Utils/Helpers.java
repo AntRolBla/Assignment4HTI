@@ -151,7 +151,7 @@ public class Helpers {
         Date midnightDate = new Date();
         midnightDate = midNightCalendar.getTime();
 
-        if (timeslotModelArray.size() != 1){
+        if (timeslotModelArray.size() != 1 || timeslotModelArray.get(0).getmDay()){
             int iterator = 0;
             if (!timeslotModelArray.get(0).getmDay()){
                 iterator = 1;

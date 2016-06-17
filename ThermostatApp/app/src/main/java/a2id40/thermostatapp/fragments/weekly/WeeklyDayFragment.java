@@ -101,6 +101,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     }
 
     private void setupData(){
+        ((BaseActivity) getActivity()).showLoadingScreen();
         Call<WeekProgramModel> callWeekProgramModel = APIClient.getClient().getWeekProgram();
         callWeekProgramModel.enqueue(new Callback<WeekProgramModel>() {
             @Override
@@ -111,7 +112,9 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
                     setNumberOfDaysNightsLeft(mTimeslotsArray);
                     setupView();
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                     try {
                         String onResponse = response.errorBody().string();
                         //TODO: handle notSuccessful
@@ -124,6 +127,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             @Override
             public void onFailure(Call<WeekProgramModel> call, Throwable t) {
                 String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 //TODO: handle onFailure
             }
         });
@@ -131,6 +135,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
 
     private void setupView() {
         setupNumberDayNightViewAndButton();
+        setupAddTimeslotButton();
         setupButtons();
         setupRecycler();
         mDayOfWeekTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
@@ -139,16 +144,21 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     private void setupNumberDayNightViewAndButton(){
         mNumberDaysLeftTextView.setText(String.format("%d", mNumberDayLeft));
         mNumberNightsLeftTextView.setText(String.format("%d", mNumberNightLeft));
+    }
 
+    private void setupAddTimeslotButton(){
+        mAddTimeslotButton.setEnabled(true);
         if (mNumberDayLeft < 1){
             mAddTimeslotButton.setEnabled(false);
         } else {
-            mAddTimeslotButton.setEnabled(true);
+            if (mTimeslotsArray.size() == 1 && mTimeslotsArray.get(0).getmDay()){
+                mAddTimeslotButton.setEnabled(false);
+            }
         }
     }
 
     private void setupRecycler(){
-        mTimeslotsAdapter = new TimeslotsAdapter(mTimeslotsArray, this);
+        mTimeslotsAdapter = new TimeslotsAdapter(mTimeslotsArray, this, false);
         mTimeslotsRecycler.setAdapter(mTimeslotsAdapter);
         mTimeslotsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -161,6 +171,8 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     public void getTimeslotFromAddTimeslot(TimeslotModel newTimeslotModel){
         ArrayList<TimeslotModel> updatedTimeslotArray = new ArrayList<>();
         ArrayList<SwitchModel> updatedSwitch = new ArrayList<>();
+
+        ((BaseActivity) getActivity()).showLoadingScreen();
 
         updatedTimeslotArray = updateTimeslotWithAdded(newTimeslotModel); // Updated array with add timeslot
         updatedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotArray); // Updated switch
@@ -177,7 +189,10 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     mTimeslotsAdapter.notifyDataSetChanged();
                     setNumberOfDaysNightsLeft(mTimeslotsArray);
                     setupNumberDayNightViewAndButton();
+                    setupAddTimeslotButton();
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                     try {
                         String onResponse = response.errorBody().string();
                         //TODO: handle notSuccessful
@@ -190,6 +205,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             @Override
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 //TODO: handle onFailure
             }
         });
@@ -276,8 +292,12 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                 updatedTimeslotArray.remove(position);
             }
         } else { // If it is in the first position
-            updatedTimeslotArray.get(position+1).setmStarTime(updatedTimeslotArray.get(position).getmStarTime());
-            updatedTimeslotArray.remove(position);
+            if (updatedTimeslotArray.size() == 1){ // If there is only one day timeslot
+                updatedTimeslotArray.get(position).setmDay(false);
+            } else { //If there are more days timeslots
+                updatedTimeslotArray.get(position+1).setmStarTime(updatedTimeslotArray.get(position).getmStarTime());
+                updatedTimeslotArray.remove(position);
+            }
         }
 
         return updatedTimeslotArray;
@@ -405,15 +425,18 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.fragment_weekly_day_add_timeslot_button:
-                Timepoint[] availableTimes = createAvailableHoursTimepointArray(mTimeslotsArray);
-                ((BaseActivity) getActivity()).openAddTimeslots(mDay, mNumberDayLeft, availableTimes);
+                ArrayList<Timepoint[]> availableTimes = createAvailableHoursTimepointArray(mTimeslotsArray);
+                Timepoint[] availableTimesStart = availableTimes.get(0);
+                Timepoint[] availableTimesEnd = availableTimes.get(1);
+                ((BaseActivity) getActivity()).openAddTimeslots(mDay, mNumberDayLeft, availableTimesStart, availableTimesEnd);
                 break;
         }
     }
 
-    private Timepoint[] createAvailableHoursTimepointArray(ArrayList<TimeslotModel> timeslotsModelArray){
+    private ArrayList<Timepoint[]> createAvailableHoursTimepointArray(ArrayList<TimeslotModel> timeslotsModelArray){
         ArrayList<TimeslotModel> arrayOnlyWithNight = new ArrayList<>();
-        ArrayList<Timepoint> timePointsArrayList = new ArrayList<>();
+        ArrayList<Timepoint> timePointsArrayListStart = new ArrayList<>();
+        ArrayList<Timepoint> timePointsArrayListEnd = new ArrayList<>();
         Calendar temp = Calendar.getInstance();
         int initialHour;
         int initialMinute;
@@ -435,38 +458,52 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
 
                 // For the initialHour - add from initialM to 59
                 for (int min = initialMinute; min < 60; min++){
-                    timePointsArrayList.add(new Timepoint(initialHour, min));
+                    timePointsArrayListEnd.add(new Timepoint(initialHour, min));
+                    timePointsArrayListStart.add(new Timepoint(initialHour, min));
                 }
                 // For the hours between initial and final - add all minutes
                 for (int hour = initialHour+1; hour < finalHour; hour++){
                     int min = 0;
                     while (min < 60){
-                        timePointsArrayList.add(new Timepoint(hour, min));
+                        timePointsArrayListStart.add(new Timepoint(hour, min));
+                        timePointsArrayListEnd.add(new Timepoint(hour, min));
                         min++;
                     }
                 }
                 // For the final hour - add until final minute
-                for (int min = 0; min <= finalMinute; min++){
-                    timePointsArrayList.add(new Timepoint(finalHour, min));
+                for (int min = 0; min < finalMinute; min++){
+                    timePointsArrayListStart.add(new Timepoint(finalHour, min));
+                    timePointsArrayListEnd.add(new Timepoint(finalHour, min));
                 }
+                timePointsArrayListEnd.add(new Timepoint(finalHour, finalMinute));
 
             } else { // Should only add the minutes between the hours
-                for (int min = initialMinute; min <= finalMinute; min++){
-                    timePointsArrayList.add(new Timepoint(finalHour, min));
+                for (int min = initialMinute; min < finalMinute; min++){
+                    timePointsArrayListEnd.add(new Timepoint(finalHour, min));
+                    timePointsArrayListStart.add(new Timepoint(finalHour, min));
                 }
+                timePointsArrayListEnd.add(new Timepoint(finalHour, finalMinute));
             }
         }
 
-        Timepoint[] timePointArray = new Timepoint[timePointsArrayList.size()];
-        timePointArray = timePointsArrayList.toArray(timePointArray);
+        Timepoint[] timePointArrayEnd = new Timepoint[timePointsArrayListEnd.size()];
+        timePointArrayEnd = timePointsArrayListEnd.toArray(timePointArrayEnd);
+        Timepoint[] timePointArrayStart = new Timepoint[timePointsArrayListStart.size()];
+        timePointArrayStart = timePointsArrayListStart.toArray(timePointArrayStart);
 
-        return timePointArray;
+        ArrayList<Timepoint[]> bothArrays = new ArrayList<>();
+        bothArrays.add(timePointArrayStart);
+        bothArrays.add(timePointArrayEnd);
+
+        return bothArrays;
     }
 
     @Override
     public void removeTimeslotClicked(int position) {
         ArrayList<TimeslotModel> updatedTimeslotWithRemovedArray = new ArrayList<>();
         ArrayList<SwitchModel> updatedWithRemovedSwitch = new ArrayList<>();
+
+        ((BaseActivity) getActivity()).showLoadingScreen();
 
         updatedTimeslotWithRemovedArray = updateTimeslotWithRemoved(position); // Get array without position selected
         updatedWithRemovedSwitch = mHelper.convertArrayTimeslotsToArraySwitch(updatedTimeslotWithRemovedArray); // Get array of switches updated
@@ -485,7 +522,10 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     mTimeslotsAdapter.notifyDataSetChanged();
                     setNumberOfDaysNightsLeft(mTimeslotsArray);
                     setupNumberDayNightViewAndButton();
+                    setupAddTimeslotButton();
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else { // With error: Undo modification on mWeekProgram using mTimeslotArray
+                    ((BaseActivity) getActivity()).hideLoadingScreen();
                     try {
                         String onResponse = response.errorBody().string();
                         //TODO: handle notSuccessful
@@ -499,10 +539,9 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             @Override
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 //TODO: handle onFailure
             }
         });
-
-        int a = 3;
     }
 }
