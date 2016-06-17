@@ -37,7 +37,6 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     private TimeslotsAdapter mTimeslotsAdapter;
     private ArrayList<TimeslotModel> mTimeslotsArray;
     private Helpers mHelper = new Helpers();
-    private SnackBarHelper mSnackBarHelper = new SnackBarHelper();
 
     // Variable to store data from server
     private WeekProgramModel mWeekProgramModel;

@@ -38,7 +38,6 @@ import butterknife.ButterKnife;
 public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private WeeklyDayFragment mWeeklyDayFragment;
-    private SnackBarHelper mSnackBarHelper = new SnackBarHelper();
 
     @BindView(R.id.activity_base_toolbar)
     Toolbar mToolbar;
@@ -177,6 +176,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     public void goBackAddCallErrorSnackBar(){
         getSupportFragmentManager().popBackStack();
-        mSnackBarHelper.showErrorSnackBar(mDrawerLayout);
+        SnackBarHelper.showErrorSnackBar(mDrawerLayout);
     }
 }
