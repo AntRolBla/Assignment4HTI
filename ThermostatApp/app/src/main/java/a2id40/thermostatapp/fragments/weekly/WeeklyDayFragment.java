@@ -510,11 +510,10 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
 
     public AlertDialog createRemoveTimeslotDialog(final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        String title = String.format(getString(R.string.fragment_weeklyday_removeDialog_title), mTimeslotsArray.get(position).getmHourTimeslot());
-        String body = getString(R.string.fragment_weeklyday_removeDialog_body);
 
-        builder.setTitle(title)
-                .setMessage(body)
+        builder.setIcon(R.drawable.ic_warning)
+                .setTitle(R.string.fragment_weeklyday_removeDialog_title)
+                .setMessage(R.string.fragment_weeklyday_removeDialog_body)
                 .setPositiveButton(R.string.fragment_weeklyday_removeDialog_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
