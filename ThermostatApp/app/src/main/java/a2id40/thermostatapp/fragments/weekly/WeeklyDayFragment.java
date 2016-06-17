@@ -1,7 +1,9 @@
 package a2id40.thermostatapp.fragments.weekly;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -458,8 +460,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         return bothArrays;
     }
 
-    @Override
-    public void removeTimeslotClicked(int position) {
+    private void removeTimeslot(int position) {
         ArrayList<TimeslotModel> updatedTimeslotWithRemovedArray = new ArrayList<>();
         ArrayList<SwitchModel> updatedWithRemovedSwitch = new ArrayList<>();
 
@@ -505,6 +506,34 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                 //TODO: handle onFailure
             }
         });
+    }
+
+    public AlertDialog createRemoveTimeslotDialog(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        String title = String.format(getString(R.string.fragment_weeklyday_removeDialog_title), mTimeslotsArray.get(position).getmHourTimeslot());
+        String body = getString(R.string.fragment_weeklyday_removeDialog_body);
+
+        builder.setTitle(title)
+                .setMessage(body)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeTimeslot(position);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        return builder.create();
+    }
+
+    @Override
+    public void removeTimeslotClicked(int position) {
+        AlertDialog removeAlert = createRemoveTimeslotDialog(position);
+        removeAlert.show();
     }
 
     // Called by BaseActivity when returning from AddTimeslotFragment
