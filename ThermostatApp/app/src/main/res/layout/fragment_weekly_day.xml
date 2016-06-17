@@ -23,6 +23,7 @@
         android:layout_margin="20dp"
         android:text="Add time slot"
         android:layout_marginBottom="25dp"/>
+    <include layout="@layout/timeslots_recycler_header"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="300dp"
         android:layout_height="200dp"
