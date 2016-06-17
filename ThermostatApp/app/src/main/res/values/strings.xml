@@ -31,4 +31,6 @@
     <string name="fragment_weekly_weekend_title">Weekend</string>
     <string name="fragment_weeklyday_removeDialog_title">Delete the %s timeslot?</string>
     <string name="fragment_weeklyday_removeDialog_body">This action cannot be undone!</string>
+    <string name="fragment_weeklyday_removeDialog_ok">OK</string>
+    <string name="fragment_weeklyday_removeDialog_cancel">Cancel</string>
 </resources>

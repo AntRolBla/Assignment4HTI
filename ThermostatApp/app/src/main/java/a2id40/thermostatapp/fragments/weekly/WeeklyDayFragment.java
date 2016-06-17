@@ -515,13 +515,13 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
 
         builder.setTitle(title)
                 .setMessage(body)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.fragment_weeklyday_removeDialog_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         removeTimeslot(position);
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.fragment_weeklyday_removeDialog_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
