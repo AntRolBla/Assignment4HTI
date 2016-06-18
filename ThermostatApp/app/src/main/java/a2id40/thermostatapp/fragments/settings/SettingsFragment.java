@@ -262,23 +262,20 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private void putNewDayTempValue(Double temperature){
         DayTemperatureModel dayTemp = new DayTemperatureModel(temperature);
         Call<UpdateResponse> setDayTemperature = APIClient.getClient().setDayTemperature(dayTemp);
+        ((BaseActivity)getActivity()).showLoadingScreen();
         setDayTemperature.enqueue(new Callback<UpdateResponse>(){
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
-
+                ((BaseActivity)getActivity()).hideLoadingScreen();
                 if (response.isSuccessful() && response.body().isSuccess()){
                     // If success, do nothing
                 } else {
-                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                            Snackbar.LENGTH_LONG).show();
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){  }
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                        Snackbar.LENGTH_LONG).show();
+                ((BaseActivity)getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
 
         });
@@ -288,23 +285,20 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     private void putNewNightTempValue(Double temperature){
         NightTemperatureModel nightTemp = new NightTemperatureModel(temperature);
         Call<UpdateResponse> setNightTemperature = APIClient.getClient().setNightTemperature(nightTemp);
+        ((BaseActivity)getActivity()).showLoadingScreen();
         setNightTemperature.enqueue(new Callback<UpdateResponse>(){
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
-
+                ((BaseActivity)getActivity()).hideLoadingScreen();
                 if (response.isSuccessful() && response.body().isSuccess()){
                     // If success, do nothing
                 } else {
-                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                            Snackbar.LENGTH_LONG).show();
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){  }
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                        Snackbar.LENGTH_LONG).show();
+                ((BaseActivity)getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
 
         });

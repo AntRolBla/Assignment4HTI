@@ -318,11 +318,11 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // Current temperature caller
     private void currentTemperatureCaller(){
         Call<TemperatureModel> callTemperatureCurrent = APIClient.getClient().getCurrentTemperature();
-        ((BaseActivity) getActivity()).showLoadingScreen();
+        //((BaseActivity) getActivity()).showLoadingScreen();
         callTemperatureCurrent.enqueue(new Callback<TemperatureModel>() {
 
             public void onResponse(Call<TemperatureModel> call, Response<TemperatureModel> response) {
-                ((BaseActivity) getActivity()).hideLoadingScreen();
+                //((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mTemperatureModel = response.body();
                     mCurrentTemperature = mTemperatureModel.getCurrentTemperature();
@@ -333,7 +333,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             }
 
             public void onFailure(Call<TemperatureModel> call, Throwable t) {
-                ((BaseActivity) getActivity()).hideLoadingScreen();
+                //((BaseActivity) getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorSnackBar(getView());
             }
         });
@@ -342,11 +342,11 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // Target temperature caller
     private void targetTemperatureCaller(){
         Call<TargetTemperatureModel> callTargetTemperature = APIClient.getClient().getTargetTemperature();
-        ((BaseActivity) getActivity()).showLoadingScreen();
+        //((BaseActivity) getActivity()).showLoadingScreen();
         callTargetTemperature.enqueue(new Callback<TargetTemperatureModel>() {
 
             public void onResponse(Call<TargetTemperatureModel> call, Response<TargetTemperatureModel> response) {
-                ((BaseActivity) getActivity()).hideLoadingScreen();
+                //((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mTargetTemperatureModel = response.body();
                     mTargetTemperature = mTargetTemperatureModel.getTargetTemperature();
@@ -357,7 +357,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             }
 
             public void onFailure(Call<TargetTemperatureModel> call, Throwable t) {
-                ((BaseActivity) getActivity()).hideLoadingScreen();
+                //((BaseActivity) getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorSnackBar(getView());
             }
         });
