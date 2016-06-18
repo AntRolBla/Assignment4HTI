@@ -35,4 +35,7 @@
     <string name="fragment_weeklyday_removeDialog_cancel">Cancel</string>
     <string name="fragment_main_vacation_enabled">The vacation mode is now enabled, all temperatures are overridden.</string>
     <string name="fragment_main_vacation_disabled">The vacation mode is now disabled. \r\nTemperature values are taken from the weekly program.</string>
+    <string name="fragment_settings_error_range">All temperatures must be set to values between 5.0ºC and 30.0ºC</string>
+    <string name="fragment_settings_error_nochange">No changes to be saved</string>
+    <string name="fragment_settings_succes_saved">Your changes have been saved</string>
 </resources>

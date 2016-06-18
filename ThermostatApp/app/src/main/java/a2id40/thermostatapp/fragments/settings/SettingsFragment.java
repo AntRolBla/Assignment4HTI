@@ -127,8 +127,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     if (!sameDayTemp){   // Only check everything if it is different
                         tempOK = checkTemperatureInRange(setDayTemp);
                         if (!tempOK && numberPopUps == 0) {
-                            Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                                    Toast.LENGTH_SHORT).show();
+                            SnackBarHelper.showErrorMessage(getView(), getString(R.string.fragment_settings_error_range));
                             numberPopUps++;
                         } else {
                             // Otherwise, we overwrite it
@@ -147,8 +146,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     if (!sameNightTemp){   // Only check everything if it is different
                         tempOK = checkTemperatureInRange(setNightTemp);
                         if (!tempOK && numberPopUps == 0) {
-                            Toast.makeText(getContext(), "All temperatures must be set to values between 5.0ºC and 30.0ºC.",
-                                    Toast.LENGTH_SHORT).show();
+                            SnackBarHelper.showErrorMessage(getView(), getString(R.string.fragment_settings_error_range));
                             numberPopUps++;
                         } else {
                             // Otherwise, we overwrite it
@@ -162,9 +160,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 if ((mEditDayText.getText().length() == 0 && mEditNightText.getText().length() == 0)
                         || (sameDayTemp || sameNightTemp || sameVacationTemp)) {
                     // Pop up message
-                    Toast.makeText(getContext(), "No changes to be saved.", Toast.LENGTH_SHORT).show();
-                    // Clear input values
-                    clearInputValues();
+                    SnackBarHelper.showErrorMessage(getView(), getString(R.string.fragment_settings_error_nochange));
                 }
 
                 // If everything OK, update and show pop up message for feedback to user
@@ -172,13 +168,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     // Send changes to sever (override with new values)
                     if (mEditDayText.getText().length() != 0)       { putNewDayTempValue(currentDayTemp); }
                     if (mEditNightText.getText().length() != 0)     { putNewNightTempValue(currentNightTemp); }
-
-                    // Pop up message
-                    Toast.makeText(getContext(), "Your changes have been saved.", Toast.LENGTH_SHORT).show();
-                    // Update hint texts values
-                    setHintTexts();
-                    // Clear input values
-                    clearInputValues();
                 }
                 break;
         }
@@ -267,15 +256,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
                 ((BaseActivity)getActivity()).hideLoadingScreen();
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // If success, do nothing
+                    SnackBarHelper.showSuccessMessage(getView(), getString(R.string.fragment_settings_succes_saved));
                 } else {
                     SnackBarHelper.showErrorSnackBar(getView());
+                    getInformationFromServer();
                 }
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 ((BaseActivity)getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorSnackBar(getView());
+                getInformationFromServer();
             }
 
         });
@@ -290,15 +281,17 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
                 ((BaseActivity)getActivity()).hideLoadingScreen();
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // If success, do nothing
+                    SnackBarHelper.showSuccessMessage(getView(), getString(R.string.fragment_settings_succes_saved));
                 } else {
                     SnackBarHelper.showErrorSnackBar(getView());
+                    getInformationFromServer();
                 }
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 ((BaseActivity)getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorSnackBar(getView());
+                getInformationFromServer();
             }
 
         });

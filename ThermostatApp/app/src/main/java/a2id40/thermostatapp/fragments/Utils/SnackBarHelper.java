@@ -35,4 +35,10 @@ public class SnackBarHelper {
         mSnackbar.show();
     }
 
+    public static void showErrorMessage(View view, String message) {
+        Snackbar mSnackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+        mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.lightRed));
+        mSnackbar.show();
+    }
+
 }
