@@ -492,23 +492,21 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private void putTargetTemperature(Double temperature){
         TargetTemperatureModel targetTempModel = new TargetTemperatureModel(temperature);
         Call<UpdateResponse> setTargetTemperature = APIClient.getClient().setTargetTemperature(targetTempModel);
+        ((BaseActivity) getActivity()).showLoadingScreen();
         setTargetTemperature.enqueue(new Callback<UpdateResponse>(){
 
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful() && response.body().isSuccess()){
                     // If success, do nothing
                 } else {
-                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                            Snackbar.LENGTH_LONG).show();
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){  }
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                        Snackbar.LENGTH_LONG).show();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
 
         });
@@ -517,25 +515,22 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // Switch the weekly on/off PUT
     private void putSwitchWeeklyOnOff (){
         Call<UpdateResponse> setIsWeekProgramOn = APIClient.getClient().setWeekProgram(mWeekProgramModel);
+        ((BaseActivity) getActivity()).showLoadingScreen();
         setIsWeekProgramOn.enqueue(new Callback<UpdateResponse>(){
-
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful() && response.body().isSuccess()){
                     // If success, do nothing
                 } else {
-                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                            Snackbar.LENGTH_LONG).show();
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){  }
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 // Thrown always when first accessing the fragment
                 // The first put to the server fails
-                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
-                        Snackbar.LENGTH_LONG).show();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
                 // Undo changes
                 mVacationSwitch.toggle();
                 mSwitchState = !mSwitchState;
