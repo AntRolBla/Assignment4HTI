@@ -36,12 +36,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     //region View Components
 
-    @BindView(R.id.fragment_settings_day_textview)
-    TextView mDayTempTextView;
-
-    @BindView(R.id.fragment_settings_night_textview)
-    TextView mNightTempTextView;
-
     @BindView(R.id.fragment_settings_set_day_textview)
     TextView mEditDayText;
 
@@ -92,8 +86,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private void setHintTexts(){
         // Set hint text with current setting for each temperature
-        mEditDayText.setHint(currentDayTemp + "");
-        mEditNightText.setHint(currentNightTemp + "");
+        mEditDayText.setText(currentDayTemp + "");
+        mEditNightText.setText(currentNightTemp + "");
     }
 
     private void clearInputValues(){

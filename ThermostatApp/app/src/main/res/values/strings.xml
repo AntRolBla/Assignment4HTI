@@ -44,4 +44,6 @@
     <string name="fragment_help_title">FAQ &amp; Help</string>
     <string name="fragment_main_title">Main</string>
     <string name="fragment_settings_title">Settings</string>
+    <string name="fragment_settings_dayteamp_hint">Day Temperature</string>
+    <string name="fragment_settings_nightteamp_hint">Night Temperature</string>
 </resources>

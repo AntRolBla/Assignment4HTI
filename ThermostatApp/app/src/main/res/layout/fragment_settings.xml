@@ -9,66 +9,40 @@
     android:paddingTop="@dimen/activity_vertical_margin">
 
     <LinearLayout
+        android:layout_marginTop="20dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:weightSum="1">
-
-        <LinearLayout
-            android:orientation="vertical"
+        android:layout_gravity="center_horizontal">
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.20">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" Day temperature"
-                android:id="@+id/fragment_settings_day_textview"
-                android:textSize="20sp" />
+            android:layout_height="wrap_content">
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
                 android:id="@+id/fragment_settings_set_day_textview"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:textSize="18sp" />
-        </LinearLayout>
+                android:text=" "
+                android:hint="@string/fragment_settings_dayteamp_hint" />
 
-        <LinearLayout
-            android:orientation="vertical"
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.20">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" Night temperature"
-                android:id="@+id/fragment_settings_night_textview"
-                android:textSize="20sp" />
+            android:layout_height="wrap_content">
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
                 android:id="@+id/fragment_settings_set_night_textview"
-                android:layout_gravity="center_horizontal"
-                android:textAlignment="center"
-                android:textSize="18sp" />
-        </LinearLayout>
+                android:text=" "
+                android:hint="@string/fragment_settings_nightteamp_hint" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.20"></LinearLayout>
+        </android.support.design.widget.TextInputLayout>
 
         <Button
             android:layout_width="wrap_content"
