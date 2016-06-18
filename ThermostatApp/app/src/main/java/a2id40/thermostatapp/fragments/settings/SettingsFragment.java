@@ -12,12 +12,14 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.DayTemperatureModel;
 import a2id40.thermostatapp.data.models.NightTemperatureModel;
 import a2id40.thermostatapp.data.models.TargetTemperatureModel;
 import a2id40.thermostatapp.data.models.TemperatureModel;
 import a2id40.thermostatapp.data.models.UpdateResponse;
+import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -209,23 +211,22 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     //Current day temperature caller
     private void getDayTemperatureFromServer(){
         Call<DayTemperatureModel> callDayTempModel = APIClient.getClient().getDayTemperature();
+        ((BaseActivity)getActivity()).showLoadingScreen();
         callDayTempModel.enqueue(new Callback<DayTemperatureModel>() {
             @Override
             public void onResponse(Call<DayTemperatureModel> call, Response<DayTemperatureModel> response) {
+                ((BaseActivity)getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mDayTempModel = response.body();
                     currentDayTemp = mDayTempModel.getDayTemperature();
                 } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             @Override
             public void onFailure(Call<DayTemperatureModel> call, Throwable t) {
-                String error = t.getMessage();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
         });
     }
@@ -233,23 +234,23 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     //Current night temperature caller
     private void getNightTemperatureFromServer(){
         Call<NightTemperatureModel> callNightTempModel = APIClient.getClient().getNightTemperature();
+        ((BaseActivity)getActivity()).showLoadingScreen();
         callNightTempModel.enqueue(new Callback<NightTemperatureModel>() {
             @Override
             public void onResponse(Call<NightTemperatureModel> call, Response<NightTemperatureModel> response) {
+                ((BaseActivity)getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mNightTempModel = response.body();
                     currentNightTemp = mNightTempModel.getNightTemperature();
                 } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             @Override
             public void onFailure(Call<NightTemperatureModel> call, Throwable t) {
-                String error = t.getMessage();
+                ((BaseActivity)getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
         });
     }

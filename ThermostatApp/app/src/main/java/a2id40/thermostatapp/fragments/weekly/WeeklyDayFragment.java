@@ -55,7 +55,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     private TimeslotsAdapter mTimeslotsAdapter;
     private ArrayList<TimeslotModel> mTimeslotsArray;
     private Helpers mHelper = new Helpers();
-    private SnackBarHelper mSnackBarHelper = new SnackBarHelper();
     private boolean mIsInitialSetup= true;
 
     private int mNumberDayLeft;
@@ -120,12 +119,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                 } else {
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                     ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
-                    try {
-                        String onResponse = response.errorBody().string();
-                        //TODO: handle notSuccessful
-                    } catch (IOException e){
-                        //TODO: handle exception e
-                    }
                 }
             }
 
@@ -134,7 +127,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                 String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
-                //TODO: handle onFailure
             }
         });
     }
@@ -487,13 +479,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else { // With error: Undo modification on mWeekProgram using mTimeslotArray
                     ((BaseActivity) getActivity()).hideLoadingScreen();
-                    mSnackBarHelper.showErrorOnRemovingTimeslot(getView());
-                    try {
-                        String onResponse = response.errorBody().string();
-                        //TODO: handle notSuccessful
-                    } catch (IOException e){
-                        //TODO: handle exception e
-                    }
+                    SnackBarHelper.showErrorOnRemovingTimeslot(getView());
                 }
             }
 
@@ -502,8 +488,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
-                mSnackBarHelper.showErrorOnRemovingTimeslot(getView());
-                //TODO: handle onFailure
+                SnackBarHelper.showErrorOnRemovingTimeslot(getView());
             }
         });
     }
@@ -561,13 +546,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
                     ((BaseActivity) getActivity()).hideLoadingScreen();
-                    mSnackBarHelper.showErrorOnAddingTimeslot(getView());
-                    try {
-                        String onResponse = response.errorBody().string();
-                        //TODO: handle notSuccessful
-                    } catch (IOException e){
-                        //TODO: handle exception e
-                    }
+                    SnackBarHelper.showErrorOnAddingTimeslot(getView());
                 }
             }
 
@@ -575,8 +554,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
-                mSnackBarHelper.showErrorOnAddingTimeslot(getView());
-                //TODO: handle onFailure
+                SnackBarHelper.showErrorOnAddingTimeslot(getView());
             }
         });
     }

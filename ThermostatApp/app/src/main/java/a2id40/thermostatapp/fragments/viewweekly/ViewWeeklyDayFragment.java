@@ -78,30 +78,21 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
         callWeekProgramModel.enqueue(new Callback<WeekProgramModel>() {
             @Override
             public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mWeekProgramModel = response.body();
                     mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
                     mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
                     setupView();
-                    ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
-                    ((BaseActivity) getActivity()).hideLoadingScreen();
                     ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
-                    try {
-                        String onResponse = response.errorBody().string();
-                        //TODO: handle notSuccessful
-                    } catch (IOException e){
-                        //TODO: handle exception e
-                    }
                 }
             }
 
             @Override
             public void onFailure(Call<WeekProgramModel> call, Throwable t) {
-                String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
-                //TODO: handle onFailure
             }
         });
     }

@@ -18,6 +18,7 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.DayModel;
 import a2id40.thermostatapp.data.models.NightTemperatureModel;
@@ -26,6 +27,7 @@ import a2id40.thermostatapp.data.models.TemperatureModel;
 import a2id40.thermostatapp.data.models.UpdateResponse;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
 import a2id40.thermostatapp.data.models.WeekProgramState;
+import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -312,25 +314,23 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // Current temperature caller
     private void currentTemperatureCaller(){
         Call<TemperatureModel> callTemperatureCurrent = APIClient.getClient().getCurrentTemperature();
-        // makes the request, can have two responses from server
+        ((BaseActivity) getActivity()).showLoadingScreen();
         callTemperatureCurrent.enqueue(new Callback<TemperatureModel>() {
 
-            // has to validate is response is success
             public void onResponse(Call<TemperatureModel> call, Response<TemperatureModel> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
-                    mTemperatureModel = response.body(); // getting the response into the model variable
-                    mCurrentTemperature = mTemperatureModel.getCurrentTemperature(); // passing to String variable
+                    mTemperatureModel = response.body();
+                    mCurrentTemperature = mTemperatureModel.getCurrentTemperature();
                     setupTexts();
                 } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<TemperatureModel> call, Throwable t) {
-                String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
         });
     }
@@ -338,25 +338,23 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // Target temperature caller
     private void targetTemperatureCaller(){
         Call<TargetTemperatureModel> callTargetTemperature = APIClient.getClient().getTargetTemperature();
-        // makes the request, can have two responses from server
+        ((BaseActivity) getActivity()).showLoadingScreen();
         callTargetTemperature.enqueue(new Callback<TargetTemperatureModel>() {
 
-            // has to validate is response is success
             public void onResponse(Call<TargetTemperatureModel> call, Response<TargetTemperatureModel> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
-                    mTargetTemperatureModel = response.body(); // getting the response into the model variable
-                    mTargetTemperature = mTargetTemperatureModel.getTargetTemperature(); // passing to String variable
+                    mTargetTemperatureModel = response.body();
+                    mTargetTemperature = mTargetTemperatureModel.getTargetTemperature();
                     setupTexts();
                 } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<TargetTemperatureModel> call, Throwable t) {
-                String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
         });
     }
@@ -364,25 +362,22 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // On vacation caller
     private void onVacationSwitchCaller() {
         Call<WeekProgramState> callWeeklyOn = APIClient.getClient().getWeekProgramState();
-        // makes the request, can have two responses from server
+        ((BaseActivity) getActivity()).showLoadingScreen();
         callWeeklyOn.enqueue(new Callback<WeekProgramState>() {
-
-            // has to validate is response is success
             public void onResponse(Call<WeekProgramState> call, Response<WeekProgramState> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
-                    mWeekProgramStateModel = response.body(); // getting the response into the model variable
-                    mSwitchState = !(mWeekProgramStateModel.isWeekProgramOn()); // passing to String variable
+                    mWeekProgramStateModel = response.body();
+                    mSwitchState = !(mWeekProgramStateModel.isWeekProgramOn());
                     Double a = getTemperatureInRange(mTargetTemperature, 0.0);
                 } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
+                    SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<WeekProgramState> call, Throwable t) {
-                String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
         });
     }
@@ -435,7 +430,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // Weekly program caller OFF (state to false)
     private void weeklyProgramCallerVacationOFF(){
         final Call<WeekProgramModel> weekProgramCall = APIClient.getClient().getWeekProgram();
-        // makes the request, can have two responses from server
         weekProgramCall.enqueue(new Callback<WeekProgramModel>() {
 
             // has to validate is response is success
@@ -460,23 +454,23 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     //Current night temperature caller
     private void getNightTemperatureFromServer(){
         Call<NightTemperatureModel> callNightTempModel = APIClient.getClient().getNightTemperature();
+        ((BaseActivity) getActivity()).showLoadingScreen();
         callNightTempModel.enqueue(new Callback<NightTemperatureModel>() {
             @Override
             public void onResponse(Call<NightTemperatureModel> call, Response<NightTemperatureModel> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mNightTempModel = response.body();
                     mCurrentNightTemp = mNightTempModel.getNightTemperature();
                 } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
+                   SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             @Override
             public void onFailure(Call<NightTemperatureModel> call, Throwable t) {
-                String error = t.getMessage();
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                SnackBarHelper.showErrorSnackBar(getView());
             }
         });
     }
