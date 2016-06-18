@@ -35,7 +35,7 @@
         android:weightSum="1">
 
         <Button
-            android:layout_width="350dp"
+            android:layout_width="340dp"
             android:layout_height="fill_parent"
             android:text="About the weekly program and how to set it "
             android:id="@+id/fragment_help_weekly_button"
@@ -54,7 +54,7 @@
         android:weightSum="1" >
 
         <Button
-            android:layout_width="350dp"
+            android:layout_width="340dp"
             android:layout_height="fill_parent"
             android:text="About the temperatures and how to change their values"
             android:id="@+id/fragment_help_temperature_button"
@@ -73,7 +73,7 @@
         android:weightSum="1" >
 
         <Button
-            android:layout_width="350dp"
+            android:layout_width="340dp"
             android:layout_height="fill_parent"
             android:text="About the vacation mode and how to set it"
             android:id="@+id/fragment_help_vacation_button"

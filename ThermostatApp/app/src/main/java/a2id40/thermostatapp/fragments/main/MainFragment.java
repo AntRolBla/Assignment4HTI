@@ -1,9 +1,9 @@
 package a2id40.thermostatapp.fragments.main;
 
-import android.graphics.Color;
+import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +12,11 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.data.api.APIClient;
-import a2id40.thermostatapp.data.models.DayModel;
 import a2id40.thermostatapp.data.models.NightTemperatureModel;
 import a2id40.thermostatapp.data.models.TargetTemperatureModel;
 import a2id40.thermostatapp.data.models.TemperatureModel;
@@ -82,16 +78,15 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     // The vacation temp should be taken from the server
     private double mOnVacationTemperature = 15.0;
     // The weekly temp should be taken from the server
-    private boolean mSwitchState = true;
+    private boolean mSwitchState = false;
     private double mCurrentNightTemp = 10.0;
+    private boolean firstIteration = true;
 
     private TemperatureModel mTemperatureModel;
     private TargetTemperatureModel mTargetTemperatureModel;
     private WeekProgramState mWeekProgramStateModel;
     private WeekProgramModel mWeekProgramModel;
     private NightTemperatureModel mNightTempModel;
-    private final Handler mHandler = new Handler();
-    private Thread mThreadUpdater;
 
     // endregion
 
@@ -105,6 +100,37 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         View root  = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, root);
         setupView();
+
+        // Thread for updating the temperature values
+        final Activity act = this.getActivity();
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(250);
+                        act.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Update temperatures and text
+                                currentTemperatureCaller();
+                                targetTemperatureCaller();
+                                setupTexts();
+                                // If just created, update mSwitchState and mVacationSwitch state
+                                if (firstIteration){
+                                    firstIteration = !firstIteration;
+                                    onVacationSwitchCaller();
+                                    switchState();
+                                }
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+        t.start();
+
         return root;
     }
 
@@ -123,7 +149,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         // Get state for the switch, then update mSwitchState variable and call switchState()
         onVacationSwitchCaller();
         onVacationSwitchUpdater();
-        setupTexts();   // Put data on screen texts
+        setupTexts();
     }
 
     private void setupTexts(){
@@ -145,12 +171,11 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     // Method for getting the switch state at start (ON/OFF)
-    private void switchState(){                         // It enters it but does not update anything
+    private void switchState(){
         if (mSwitchState) {
             mVacationSwitch.setChecked(true);
         } else {
             mVacationSwitch.setChecked(false);
-            changeTemperatureAllButtonsEnable(false);
        }
     }
 
@@ -159,7 +184,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         // Update on screen texts
         setupTexts();
         // Update value of current temperature to server every time we change it
-        updateTemperatureToServer(mTargetTemperature);
+        putTargetTemperature(mTargetTemperature);
         // Update the current temperature
         currentTemperatureCaller();
         // Update on screen texts
@@ -187,49 +212,41 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.fragment_main_minus1_button:
-                if (!mSwitchState) { changeTemperature(-1.0);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (mSwitchState) { changeTemperature(-1.0); }
+                else { onClickButtonsOnVacation(); }
                 break;
             case R.id.fragment_main_minus01_button:
-                if (!mSwitchState) { changeTemperature(-0.1);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (mSwitchState) { changeTemperature(-0.1); }
+                else { onClickButtonsOnVacation(); }
                 break;
             case R.id.fragment_main_plus01_button:
-                if (!mSwitchState) { changeTemperature(0.1);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (mSwitchState) { changeTemperature(0.1); }
+                else { onClickButtonsOnVacation(); }
                 break;
             case R.id.fragment_main_plus1_button:
-                if (!mSwitchState) { changeTemperature(1.0);
-                } else { onClickButtonsOnVacation(); }
-                // Update on screen texts
-                setupTexts();
+                if (mSwitchState) { changeTemperature(1.0); }
+                else { onClickButtonsOnVacation(); }
                 break;
             // Switch functionalities
             case R.id.fragment_main_vacation_switch:
-                if (mVacationSwitch.isChecked() && !mSwitchState) {
+
+                // Act depending on the state of the switch
+                if (mVacationSwitch.isChecked()) {
                     // Override current temperature, set information to server
                     switchONVacationModeOnServer();
                     // Disable all 4 buttons and set the switch state to active
                     changeTemperaturePositiveButtonsEnable(false);
                     changeTemperatureNegativeButtonsEnable(false);
-                    mSwitchState = true;
                     // Pop up messages
                     Toast.makeText(getContext(), "The vacation mode is now enabled, all temperatures are overridden.",
                             Toast.LENGTH_SHORT).show();
 
-                } else if (!mVacationSwitch.isChecked() && mSwitchState) {
+                } else {
                     // Set temperature from weekly (day or night)
                     switchOFFVacationModeOnServer();
                     // Make available the buttons that can be used and set the switch state to non active
                     if (mTargetTemperature > MIN_TEMPERATURE){ changeTemperatureNegativeButtonsEnable(true); }
                     if (mTargetTemperature < MAX_TEMPERATURE){ changeTemperaturePositiveButtonsEnable(true); }
-                    mSwitchState = false;
                     // Pop up messages
                     Toast.makeText(getContext(), "The vacation mode is now disabled.", Toast.LENGTH_SHORT).show();
                     Toast.makeText(getContext(), "The temperature values are taken from the weekly program.", Toast.LENGTH_SHORT).show();
@@ -258,12 +275,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private void changeTemperatureAllButtonsEnable (boolean state){
         changeTemperaturePositiveButtonsEnable(state);
         changeTemperatureNegativeButtonsEnable(state);
-    }
-
-    // Method called everytime we change the temperature value through the buttons
-    private void updateTemperatureToServer(double temperature){
-        // Update the server value for target temperature (POST)
-        putTargetTemperature(temperature);
     }
 
     // Method called when the onVacation switch is changed from OFF to ON
@@ -368,7 +379,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mWeekProgramStateModel = response.body();
-                    mSwitchState = !(mWeekProgramStateModel.isWeekProgramOn());
+                    mSwitchState = mWeekProgramStateModel.isWeekProgramOn();
                     Double a = getTemperatureInRange(mTargetTemperature, 0.0);
                 } else {
                     SnackBarHelper.showErrorSnackBar(getView());
@@ -434,7 +445,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
             // has to validate is response is success
             public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     mWeekProgramModel = response.body();
                     mWeekProgramModel.getWeekProgram().setIsWeekProgramOn(false);
                 } else {
@@ -485,11 +496,10 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // TODO
-                    // Handle success (no nothing)
+                    // If success, do nothing
                 } else {
-                    // TODO
-                    // Show error message
+                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                            Snackbar.LENGTH_LONG).show();
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){  }
@@ -497,8 +507,8 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                // TODO
-                // Show error message
+                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                        Snackbar.LENGTH_LONG).show();
             }
 
         });
@@ -511,11 +521,10 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // TODO
-
+                    // If success, do nothing
                 } else {
-                    // TODO
-
+                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                            Snackbar.LENGTH_LONG).show();
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){  }
@@ -523,8 +532,13 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                // TODO
-                // Error message
+                // Thrown always when first accessing the fragment
+                // The first put to the server fails
+                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                        Snackbar.LENGTH_LONG).show();
+                // Undo changes
+                mVacationSwitch.toggle();
+                mSwitchState = !mSwitchState;
             }
 
         });

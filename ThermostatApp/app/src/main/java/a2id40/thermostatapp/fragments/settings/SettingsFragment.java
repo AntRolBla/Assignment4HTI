@@ -2,6 +2,7 @@ package a2id40.thermostatapp.fragments.settings;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,6 @@ import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.DayTemperatureModel;
 import a2id40.thermostatapp.data.models.NightTemperatureModel;
-import a2id40.thermostatapp.data.models.TargetTemperatureModel;
-import a2id40.thermostatapp.data.models.TemperatureModel;
 import a2id40.thermostatapp.data.models.UpdateResponse;
 import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import butterknife.BindView;
@@ -60,16 +59,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     // region Variables declaration
 
     double currentDayTemp = 22.2;
-    double currentNightTemp = 11.1;
+    double currentNightTemp = 20.0;
 
-    double setDayTemp = 20.00;
-    double setNightTemp = 11.1;
+    double setDayTemp = 0.00;
+    double setNightTemp = 20.0;
 
     private DayTemperatureModel mDayTempModel;
     private NightTemperatureModel mNightTempModel;
-
-    TemperatureModel mTemperatureModel;
-    double mCurrentTemperature = 10.0;
 
     //endregion
 
@@ -164,7 +160,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
                 // In case no changes are introduced
                 if ((mEditDayText.getText().length() == 0 && mEditNightText.getText().length() == 0)
-                        || (sameDayTemp || sameNightTemp)) {
+                        || (sameDayTemp || sameNightTemp || sameVacationTemp)) {
                     // Pop up message
                     Toast.makeText(getContext(), "No changes to be saved.", Toast.LENGTH_SHORT).show();
                     // Clear input values
@@ -176,6 +172,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                     // Send changes to sever (override with new values)
                     if (mEditDayText.getText().length() != 0)       { putNewDayTempValue(currentDayTemp); }
                     if (mEditNightText.getText().length() != 0)     { putNewNightTempValue(currentNightTemp); }
+
                     // Pop up message
                     Toast.makeText(getContext(), "Your changes have been saved.", Toast.LENGTH_SHORT).show();
                     // Update hint texts values
@@ -202,14 +199,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void getInformationFromServer(){
-        getDayTemperatureFromServer();
-        getNightTemperatureFromServer();
+        dayTemperatureCaller();
+        nightTemperatureCaller();
     }
 
     // Callers as auxiliar methods  ---------------------------------------------------------------- [Callers]
 
     //Current day temperature caller
-    private void getDayTemperatureFromServer(){
+    private void dayTemperatureCaller(){
         Call<DayTemperatureModel> callDayTempModel = APIClient.getClient().getDayTemperature();
         ((BaseActivity)getActivity()).showLoadingScreen();
         callDayTempModel.enqueue(new Callback<DayTemperatureModel>() {
@@ -219,6 +216,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 if (response.isSuccessful()){
                     mDayTempModel = response.body();
                     currentDayTemp = mDayTempModel.getDayTemperature();
+                    // Update hint texts
+                    setHintTexts();
                 } else {
                     SnackBarHelper.showErrorSnackBar(getView());
                 }
@@ -232,7 +231,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     //Current night temperature caller
-    private void getNightTemperatureFromServer(){
+    private void nightTemperatureCaller(){
         Call<NightTemperatureModel> callNightTempModel = APIClient.getClient().getNightTemperature();
         ((BaseActivity)getActivity()).showLoadingScreen();
         callNightTempModel.enqueue(new Callback<NightTemperatureModel>() {
@@ -242,6 +241,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 if (response.isSuccessful()){
                     mNightTempModel = response.body();
                     currentNightTemp = mNightTempModel.getNightTemperature();
+                    // Update hint texts
+                    setHintTexts();
                 } else {
                     SnackBarHelper.showErrorSnackBar(getView());
                 }
@@ -265,11 +266,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
 
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // TODO
-                    // Handle success (no nothing)
+                    // If success, do nothing
                 } else {
-                    // TODO
-                    // Show error message
+                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                            Snackbar.LENGTH_LONG).show();
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){  }
@@ -277,8 +277,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                // TODO
-                // Show error message
+                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                        Snackbar.LENGTH_LONG).show();
             }
 
         });
@@ -292,11 +292,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
 
                 if (response.isSuccessful() && response.body().isSuccess()){
-                    // TODO
-                    // Handle success (no nothing)
+                    // If success, do nothing
                 } else {
-                    // TODO
-                    // Show error message
+                    Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                            Snackbar.LENGTH_LONG).show();
                     try {
                         String onResponse = response.errorBody().string();
                     } catch (IOException e){  }
@@ -304,8 +303,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                // TODO
-                // Show error message
+                Snackbar.make(getView(), "There has been an error while accessing the server. Please try again.",
+                        Snackbar.LENGTH_LONG).show();
             }
 
         });
