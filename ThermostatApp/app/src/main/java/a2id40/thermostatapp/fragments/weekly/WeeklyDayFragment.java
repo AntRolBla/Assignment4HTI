@@ -136,6 +136,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         setupAddTimeslotButton();
         setupButtons();
         setupRecycler();
+        ((BaseActivity)getActivity()).setTitle(String.format("Weekly Program: %s", weekDays[mDay]));
         mDayOfWeekTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
     }
 

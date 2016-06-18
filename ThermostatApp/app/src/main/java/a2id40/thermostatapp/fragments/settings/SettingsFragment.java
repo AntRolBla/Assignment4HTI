@@ -88,6 +88,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setupView() {
+        ((BaseActivity)getActivity()).setTitle(R.string.fragment_settings_title);
         setHintTexts();
         setupButtons();
     }

@@ -17,6 +17,7 @@ import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.activities.base.util.ActivityUtils;
 import a2id40.thermostatapp.fragments.main.MainFragment;
 import butterknife.BindView;
@@ -66,6 +67,7 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setupView() {
+        ((BaseActivity)getActivity()).setTitle(R.string.fragment_help_title);
         setupButtons();
         setupExpandables();
     }

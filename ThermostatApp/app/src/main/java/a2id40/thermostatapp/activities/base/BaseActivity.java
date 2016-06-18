@@ -178,4 +178,8 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().popBackStack();
         SnackBarHelper.showErrorSnackBar(mDrawerLayout);
     }
+
+    public void setActivityTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 }

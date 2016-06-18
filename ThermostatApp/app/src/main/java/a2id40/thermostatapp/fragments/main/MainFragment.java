@@ -143,6 +143,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     private void setupView() {
+        ((BaseActivity)getActivity()).setTitle(R.string.fragment_main_title);
         setupData();    // Get data from server
         setupButtons(); // Set up buttons listeners
         switchState();  // Set the switch state

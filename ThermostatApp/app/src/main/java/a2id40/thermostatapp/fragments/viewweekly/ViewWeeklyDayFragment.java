@@ -99,6 +99,7 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
 
     private void setupView(){
         setupRecycler();
+        ((BaseActivity)getActivity()).setTitle(String.format("Weekly Program: %s", weekDays[mDay]));
         mDayOfWeekTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
     }
 

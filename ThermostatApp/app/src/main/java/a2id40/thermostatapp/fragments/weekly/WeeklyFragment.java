@@ -60,6 +60,7 @@ public class WeeklyFragment extends Fragment implements View.OnClickListener {
     }
 
     private void setupView() {
+        ((BaseActivity)getActivity()).setTitle(R.string.fragment_weekly_main_title);
         setupButtons();
     }
 
