@@ -6,17 +6,17 @@ package a2id40.thermostatapp.data.models;
 
 public class WeekProgramState {
 
-    boolean week_program_state;
+    String week_program_state;
 
     public WeekProgramState(boolean isWeekProgramOn) {
-        this.week_program_state = isWeekProgramOn;
+        this.week_program_state = isWeekProgramOn ? "on" : "off";
     }
 
     public boolean isWeekProgramOn() {
-        return week_program_state;
+        return week_program_state.equals("on");
     }
 
     public void setIsWeekProgramOn(boolean isWeekProgramOn) {
-        this.week_program_state = isWeekProgramOn;
+        this.week_program_state = isWeekProgramOn ? "on" : "off";
     }
 }

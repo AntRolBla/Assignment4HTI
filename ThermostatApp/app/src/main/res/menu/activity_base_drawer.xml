@@ -4,15 +4,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/base_drawer_main"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_home"
             android:title="@string/activity_base_drawer_main" />
         <item
             android:id="@+id/base_drawer_weekly"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_calendar"
             android:title="@string/activity_base_drawer_weekly" />
         <item
             android:id="@+id/base_drawer_viewWeekly"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_calendar_list"
             android:title="@string/activity_base_drawer_viewWeekly" />
         <item
             android:id="@+id/base_drawer_settings"
@@ -20,7 +20,7 @@
             android:title="@string/activity_base_drawer_settings" />
         <item
             android:id="@+id/base_drawer_help"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_help"
             android:title="@string/activity_base_drawer_help" />
     </group>
 

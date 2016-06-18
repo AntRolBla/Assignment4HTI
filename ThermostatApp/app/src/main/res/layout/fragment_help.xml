@@ -1,30 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:weightSum="1">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout2"
-        android:layout_weight="0.18"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="69dp"
-        android:text="Weekly program help"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:textColor="#010000"
-        android:id="@+id/fragment_help_main_info_textview"
-        android:enabled="false"
-        android:visibility="visible"
-        android:typeface="normal"
-        android:layout_weight="0.11"
-        android:layout_gravity="center" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -35,52 +19,99 @@
         android:weightSum="1">
 
         <Button
-            android:layout_width="350dp"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:drawableRight="@drawable/ic_arrow_down"
             android:text="About the weekly program and how to set it "
             android:id="@+id/fragment_help_weekly_button"
             android:layout_gravity="center_horizontal"
-            android:textSize="18sp"
-            android:clickable="true"
-            android:typeface="monospace" />
-    </LinearLayout>
+            android:padding="10dp"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:clickable="true"/>
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.21"
-        android:weightSum="1" >
+        <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+            android:id="@+id/fragment_help_weekly_expandable"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            app:ael_expanded="false"
+            app:ael_duration="250"
+            app:ael_interpolator="linear"
+            app:ael_orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:layout_margin="10dp"
+                android:text="@string/fragment_help_weekly_text"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+        </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
         <Button
-            android:layout_width="350dp"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:text="About the temperatures and how to change their values"
             android:id="@+id/fragment_help_temperature_button"
+            android:drawableRight="@drawable/ic_arrow_down"
             android:layout_gravity="center_horizontal"
-            android:textSize="18sp"
-            android:clickable="true"
-            android:typeface="monospace" />
-    </LinearLayout>
+            android:textAllCaps="false"
+            android:padding="10dp"
+            android:gravity="center_vertical|left"
+            android:textSize="14sp"
+            android:clickable="true" />
+        <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+            android:id="@+id/fragment_help_temperature_expandable"
+            android:layout_width="match_parent"
+            android:layout_height="190dp"
+            app:ael_expanded="false"
+            app:ael_duration="250"
+            app:ael_interpolator="linear"
+            app:ael_orientation="vertical">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.21"
-        android:weightSum="1" >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:layout_margin="10dp"
+                android:text="@string/fragment_help_temperature_text"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+        </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
         <Button
-            android:layout_width="350dp"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+
+            android:drawableRight="@drawable/ic_arrow_down"
             android:text="About the vacation mode and how to set it"
             android:id="@+id/fragment_help_vacation_button"
+            android:padding="10dp"
+            android:gravity="center_vertical|left"
+            android:textAllCaps="false"
             android:layout_gravity="center_horizontal"
-            android:textSize="18sp"
-            android:clickable="true"
-            android:typeface="monospace" />
+            android:textSize="14sp"
+            android:clickable="true" />
+        <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+            android:id="@+id/fragment_help_vacation_expandable"
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            app:ael_expanded="false"
+            app:ael_duration="250"
+            app:ael_interpolator="linear"
+            app:ael_orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="170dp"
+                android:layout_margin="10dp"
+                android:text="@string/fragment_help_vacation_text"
+                android:layout_gravity="center_horizontal"
+                android:textSize="14sp" />
+        </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="64dp">
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,7 +24,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/fragment_add_timeslot_start_time_edittext"
         android:layout_gravity="center"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:focusable="false"
+        android:longClickable="false"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,7 +39,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/fragment_add_timeslot_end_time_edittext"
         android:layout_gravity="center"
-        android:layout_marginBottom="30dp"/>
+        android:layout_marginBottom="30dp"
+        android:focusable="false"
+        android:longClickable="false"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

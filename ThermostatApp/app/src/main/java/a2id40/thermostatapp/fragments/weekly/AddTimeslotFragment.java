@@ -13,7 +13,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.wdullaer.materialdatetimepicker.time.RadialPickerLayout;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
+import java.sql.Array;
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,12 +35,19 @@ import butterknife.ButterKnife;
 public class AddTimeslotFragment extends android.support.v4.app.Fragment implements View.OnClickListener {
 
     private int mDay;
+    private Timepoint[] mTimepointsInitial;
+    private Timepoint[] mTimepointsEnd;
     private String[] weekDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
     private Date mStartTimeDate;
     private Date mEndTimeDate;
+    private int mStartHour = 0;
+    private int mStartMinute = 0;
+    private boolean mHasDayBeenChanged = false;
 
     public static final String ADD_TIMESLOT_SUN_LEFT_BUNDLE = "Add timeslot sun left";
+    public static final String ADD_TIMESLOT_TIMEPOINTS_INITIAL_BUNDLE = "Add timepoints initial array";
+    public static final String ADD_TIMESLOT_TIMEPOINTS_END_BUNDLE = "Add timepoints end array";
 
     //region View Component
     @BindView(R.id.fragment_add_timeslot_week_day_textview)
@@ -66,12 +78,15 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
         Bundle addTimeslotBundle = this.getArguments();
         mDay = addTimeslotBundle.getInt(WeeklyDayFragment.WEEK_DAY_BUNDLE);
         mSunLeftTextView.setText(String.format("%dx", addTimeslotBundle.getInt(ADD_TIMESLOT_SUN_LEFT_BUNDLE)));
+        mTimepointsEnd = (Timepoint[]) addTimeslotBundle.getParcelableArray(ADD_TIMESLOT_TIMEPOINTS_END_BUNDLE);
+        mTimepointsInitial = (Timepoint[]) addTimeslotBundle.getParcelableArray(ADD_TIMESLOT_TIMEPOINTS_INITIAL_BUNDLE);
         setupView();
         return root;
     }
 
     private void setupView() {
         setupButtons();
+        mEndTimeEditText.setEnabled(false);
         mWeekDayTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
     }
 
@@ -91,6 +106,10 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
                 if (isStart){
                     mStartTimeEditText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                     startAndEndTimeToDate(true, hourOfDay, minute);
+                    mStartHour = hourOfDay;
+                    mStartMinute = minute;
+                    mHasDayBeenChanged = true;
+                    enableEndTime();
                 } else {
                     mEndTimeEditText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                     startAndEndTimeToDate(false, hourOfDay, minute);
@@ -98,8 +117,61 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
             }
         }, hour, minute, true);
         mTimePicker.setThemeDark(true);
+        if (!isStart && mHasDayBeenChanged){
+            mTimePicker.setMinTime(new Timepoint(mStartHour, mStartMinute+1));
+            mTimePicker.setSelectableTimes(getTimepointArrayAfterChosingStart(mTimepointsEnd));
+        } else {
+            mTimePicker.setSelectableTimes(mTimepointsInitial);
+        }
         mTimePicker.show(getActivity().getFragmentManager(), "TimePickerDialog");
     }
+
+    private void enableEndTime(){
+        mEndTimeEditText.setEnabled(true);
+    }
+
+    private Timepoint[] getTimepointArrayAfterChosingStart(Timepoint[] timepointArray){
+        ArrayList<Timepoint> initialArrayList = new ArrayList<Timepoint>(Arrays.asList(timepointArray));
+        int position = 0;
+        int internal = 0;
+        int size = initialArrayList.size();
+
+        for (int i = 0; i < initialArrayList.size(); i++){
+            if (initialArrayList.get(i).getHour() == mStartHour && initialArrayList.get(i).getMinute() == mStartMinute){
+                position = i;
+            }
+        }
+
+        Timepoint control = new Timepoint(initialArrayList.get(position).getHour(), initialArrayList.get(position).getMinute());
+        control = addOneMinuteToTimepoint(control);
+        internal = position+1;
+
+        for (int i = position+1; i < size; i++){
+            if (control.getHour() == initialArrayList.get(internal).getHour() || control.getMinute() == initialArrayList.get(internal).getMinute()){
+                internal++;
+            } else {
+                initialArrayList.remove(internal);
+            }
+            control = addOneMinuteToTimepoint(control);
+        }
+
+        Timepoint[] newTimepointArray = new Timepoint[initialArrayList.size()];
+        newTimepointArray = initialArrayList.toArray(newTimepointArray);
+
+        return newTimepointArray;
+    }
+
+    private Timepoint addOneMinuteToTimepoint(Timepoint initialTimepoint){
+        Timepoint newTimepoint;
+        if (initialTimepoint.getMinute() != 59){ //If it is the middle of the hour
+            newTimepoint = new Timepoint(initialTimepoint.getHour(), initialTimepoint.getMinute()+1);
+        } else {
+            newTimepoint = new Timepoint(initialTimepoint.getHour()+1, 0);
+        }
+        return newTimepoint;
+    }
+
+
 
     private void startAndEndTimeToDate(boolean isStart, int hour, int minutes){
         Calendar temp = Calendar.getInstance();

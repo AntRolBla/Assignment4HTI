@@ -21,10 +21,12 @@ public class TimeslotsAdapter extends RecyclerView.Adapter<TimeslotsAdapter.Time
 
     private ArrayList<TimeslotModel> mTimeslotsList;
     private TimeslotAdapterInterface mListener;
+    private boolean mIsViewWeekly;
 
-    public TimeslotsAdapter(ArrayList<TimeslotModel> mTimeslotsList, TimeslotAdapterInterface mListener) {
+    public TimeslotsAdapter(ArrayList<TimeslotModel> mTimeslotsList, TimeslotAdapterInterface mListener, boolean isViewWeekly) {
         this.mTimeslotsList = mTimeslotsList;
         this.mListener = mListener;
+        this.mIsViewWeekly = isViewWeekly;
     }
 
     public class TimeslotsViewHolder extends RecyclerView.ViewHolder {
@@ -56,11 +58,21 @@ public class TimeslotsAdapter extends RecyclerView.Adapter<TimeslotsAdapter.Time
     @Override
     public void onBindViewHolder(TimeslotsViewHolder holder, final int position) {
         holder.timeslot.setText(mTimeslotsList.get(position).getmHourTimeslot());
-        if (mTimeslotsList.get(position).getmDay()){
-            holder.dayNightImageView.setImageResource(R.drawable.sun_image);
+        if (!mIsViewWeekly){
+            if (mTimeslotsList.get(position).getmDay()){
+                holder.deleteImageView.setVisibility(View.VISIBLE);
+                holder.dayNightImageView.setImageResource(R.drawable.sun_image);
+            } else {
+                holder.dayNightImageView.setImageResource(R.drawable.moon_image);
+                holder.deleteImageView.setVisibility(View.GONE);
+            }
         } else {
-            holder.dayNightImageView.setImageResource(R.drawable.moon_image);
             holder.deleteImageView.setVisibility(View.GONE);
+            if (mTimeslotsList.get(position).getmDay()){
+                holder.dayNightImageView.setImageResource(R.drawable.sun_image);
+            } else {
+                holder.dayNightImageView.setImageResource(R.drawable.moon_image);
+            }
         }
         holder.deleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override

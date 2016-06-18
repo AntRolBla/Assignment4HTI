@@ -12,10 +12,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import a2id40.thermostatapp.R;
+import a2id40.thermostatapp.activities.base.BaseActivity;
 import a2id40.thermostatapp.data.api.APIClient;
 import a2id40.thermostatapp.data.models.SwitchModel;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
 import a2id40.thermostatapp.fragments.Utils.Helpers;
+import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import a2id40.thermostatapp.fragments.weekly.Models.TimeslotModel;
 import a2id40.thermostatapp.fragments.weekly.TimeslotAdapterInterface;
 import a2id40.thermostatapp.fragments.weekly.TimeslotsAdapter;
@@ -51,9 +53,6 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     @BindView(R.id.fragment_viewweekly_day_nights_left_textview)
     TextView mNumberNightsLeftTextView;
 
-    @BindView(R.id.fragment_viewweekly_day_week_day_textview)
-    TextView mDayOfWeekTextView;
-
     //endregion
 
     public static ViewWeeklyDayFragment newInstance() {return new ViewWeeklyDayFragment();}
@@ -70,40 +69,38 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     }
 
     private void setupData(){
+        ((BaseActivity) getActivity()).showLoadingScreen();
+
         Call<WeekProgramModel> callWeekProgramModel = APIClient.getClient().getWeekProgram();
         callWeekProgramModel.enqueue(new Callback<WeekProgramModel>() {
             @Override
             public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
                     mWeekProgramModel = response.body();
                     mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
                     mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
                     setupView();
                 } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                        //TODO: handle notSuccessful
-                    } catch (IOException e){
-                        //TODO: handle exception e
-                    }
+                    ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
                 }
             }
 
             @Override
             public void onFailure(Call<WeekProgramModel> call, Throwable t) {
-                String error = t.getMessage();
-                //TODO: handle onFailure
+                ((BaseActivity) getActivity()).hideLoadingScreen();
+                ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
             }
         });
     }
 
     private void setupView(){
         setupRecycler();
-        mDayOfWeekTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
+        ((BaseActivity)getActivity()).setTitle(String.format("Weekly Program: %s", weekDays[mDay]));
     }
 
     private void setupRecycler(){
-        mTimeslotsAdapter = new TimeslotsAdapter(mTimeslotsArray, this);
+        mTimeslotsAdapter = new TimeslotsAdapter(mTimeslotsArray, this, true);
         mTimeslotsRecycler.setAdapter(mTimeslotsAdapter);
         mTimeslotsRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
     }
