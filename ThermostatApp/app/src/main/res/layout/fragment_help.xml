@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="170dp"
                 android:layout_margin="10dp"
-                android:text="The weekly program allows you to set beforehand the temperature type (day or night) for every day of the week, by selecting the initial and final hour of each time slot. \n\n To set it, access the &apos;Set Weekly&apos; option in the menu and access to the day of the week you want to set the program of. There you can select the start and end time and the type. Keep in mind you are only allowed to do 5 transitions to day and 5 to night."
+                android:text="@string/fragment_help_weekly_text"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
         </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
@@ -66,7 +66,7 @@
         <com.github.aakira.expandablelayout.ExpandableRelativeLayout
             android:id="@+id/fragment_help_temperature_expandable"
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="190dp"
             app:ael_expanded="false"
             app:ael_duration="250"
             app:ael_interpolator="linear"
@@ -74,9 +74,9 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="170dp"
+                android:layout_height="190dp"
                 android:layout_margin="10dp"
-                android:text="The weekly program allows you to set beforehand the temperature type (day or night) for every day of the week, by selecting the initial and final hour of each time slot. \n\n To set it, access the &apos;Set Weekly&apos; option in the menu and access to the day of the week you want to set the program of. There you can select the start and end time and the type. Keep in mind you are only allowed to do 5 transitions to day and 5 to night."
+                android:text="@string/fragment_help_temperature_text"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
         </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
@@ -108,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="170dp"
                 android:layout_margin="10dp"
-                android:text="The weekly program allows you to set beforehand the temperature type (day or night) for every day of the week, by selecting the initial and final hour of each time slot. \n\n To set it, access the &apos;Set Weekly&apos; option in the menu and access to the day of the week you want to set the program of. There you can select the start and end time and the type. Keep in mind you are only allowed to do 5 transitions to day and 5 to night."
+                android:text="@string/fragment_help_vacation_text"
                 android:layout_gravity="center_horizontal"
                 android:textSize="14sp" />
         </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
