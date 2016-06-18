@@ -6,14 +6,7 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="64dp">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Weekly Program: "
-        android:textSize="30dp"
-        android:gravity="center"
-        android:id="@+id/fragment_weekly_day_week_day_textview"
-        android:layout_marginBottom="15dp"/>
+
     <Button
         android:layout_width="120dp"
         android:layout_height="wrap_content"

@@ -11,17 +11,6 @@
         android:layout_gravity="center_horizontal"
         android:id="@+id/mTextView"></LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="69dp"
-        android:text="@string/settings"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:textColor="#010000"
-        android:id="@+id/fragment_settings_info_textview"
-        android:enabled="false"
-        android:visibility="visible"
-        android:typeface="normal" />
 
     <LinearLayout
         android:orientation="vertical"

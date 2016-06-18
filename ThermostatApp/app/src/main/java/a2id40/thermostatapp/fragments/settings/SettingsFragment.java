@@ -36,9 +36,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     //region View Components
 
-    @BindView(R.id.fragment_settings_info_textview)
-    TextView mSettingsTextView;
-
     @BindView(R.id.fragment_settings_day_textview)
     TextView mDayTempTextView;
 

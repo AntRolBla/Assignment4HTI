@@ -53,9 +53,6 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     @BindView(R.id.fragment_viewweekly_day_nights_left_textview)
     TextView mNumberNightsLeftTextView;
 
-    @BindView(R.id.fragment_viewweekly_day_week_day_textview)
-    TextView mDayOfWeekTextView;
-
     //endregion
 
     public static ViewWeeklyDayFragment newInstance() {return new ViewWeeklyDayFragment();}
@@ -100,7 +97,6 @@ public class ViewWeeklyDayFragment extends android.support.v4.app.Fragment imple
     private void setupView(){
         setupRecycler();
         ((BaseActivity)getActivity()).setTitle(String.format("Weekly Program: %s", weekDays[mDay]));
-        mDayOfWeekTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
     }
 
     private void setupRecycler(){

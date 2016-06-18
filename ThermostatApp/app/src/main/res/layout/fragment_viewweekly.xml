@@ -6,12 +6,7 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:paddingTop="64dp">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Weekly Program"
-        android:textSize="30dp"
-        android:gravity="center" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

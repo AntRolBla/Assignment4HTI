@@ -75,9 +75,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
     @BindView(R.id.fragment_weekly_day_nights_left_textview)
     TextView mNumberNightsLeftTextView;
 
-    @BindView(R.id.fragment_weekly_day_week_day_textview)
-    TextView mDayOfWeekTextView;
-
     @BindView(R.id.fragment_weekly_day_add_timeslot_button)
     Button mAddTimeslotButton;
 
@@ -137,7 +134,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         setupButtons();
         setupRecycler();
         ((BaseActivity)getActivity()).setTitle(String.format("Weekly Program: %s", weekDays[mDay]));
-        mDayOfWeekTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
     }
 
     private void setupNumberDayNightViewAndButton(){
