@@ -2,13 +2,14 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#ff9800</color>
 
     <color name="buttonPrimary">#5C6BC0</color>
     <color name="white">#FFFFFF</color>
     <color name="lightGray">#DEDDDC</color>
-    <color name="lightRed">#ff7043</color>
+    <color name="lightRed">#F2704F</color>
     <color name="lightGreen">#8bc34a</color>
+    <color name="lightBlue">#03A9F4</color>
 
     <color name="color_mask_highlighted">#1A000000</color>
     <color name="color_mask_disabled">#66FFFFFF</color>

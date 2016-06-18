@@ -1,13 +1,17 @@
 package a2id40.thermostatapp.fragments.main;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -23,6 +27,7 @@ import a2id40.thermostatapp.data.models.TemperatureModel;
 import a2id40.thermostatapp.data.models.UpdateResponse;
 import a2id40.thermostatapp.data.models.WeekProgramModel;
 import a2id40.thermostatapp.data.models.WeekProgramState;
+import a2id40.thermostatapp.fragments.Utils.AnimatedColor;
 import a2id40.thermostatapp.fragments.Utils.SnackBarHelper;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,6 +73,9 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     @BindView(R.id.fragment_main_vacation_switch)
     Switch mVacationSwitch;
 
+    @BindView(R.id.fragment_main_temperature_circle)
+    FrameLayout mTempCircle;
+
     //endregion
 
     // region Variables declaration
@@ -108,7 +116,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             public void run() {
                 try {
                     while (!isInterrupted()) {
-                        Thread.sleep(5000);
+                        Thread.sleep(20000);
                         act.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -155,6 +163,15 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private void setupTexts(){
         mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
         mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mTargetTemperature));
+        updateCircleColor();
+    }
+
+    private void updateCircleColor() {
+        double value = (mTargetTemperature - MIN_TEMPERATURE) / (MAX_TEMPERATURE - MIN_TEMPERATURE);
+        AnimatedColor color = new AnimatedColor(ContextCompat.getColor(getContext(), R.color.lightBlue), ContextCompat.getColor(getContext(), R.color.lightRed));
+        int resultColor = color.with((float)value);
+        GradientDrawable background = (GradientDrawable) mTempCircle.getBackground();
+        background.setStroke(24, resultColor);
     }
 
     // Setting the listener for the buttons

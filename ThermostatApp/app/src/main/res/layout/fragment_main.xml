@@ -20,24 +20,32 @@
         android:singleLine="false"
         android:text="New text" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="20.1ºC"
-        android:id="@+id/fragment_main_temperature_textview"
-        android:textSize="80sp"
+    <FrameLayout
+        android:id="@+id/fragment_main_temperature_circle"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_gravity="center"
-        android:layout_marginTop="72dp"
-        android:layout_marginBottom="72dp"/>
+        android:layout_marginTop="36dp"
+        android:layout_marginBottom="36dp"
+        android:background="@drawable/main_circle">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="20.1ºC"
+            android:id="@+id/fragment_main_temperature_textview"
+            android:textSize="50sp"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+            style="@style/AppButton.Primary"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="@string/fragment_main_minus1_label"
             android:id="@+id/fragment_main_minus1_button"
@@ -51,8 +59,8 @@
             android:layout_weight="1"/>
 
         <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+            style="@style/AppButton.Primary"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="@string/fragment_main_minus01_label"
             android:id="@+id/fragment_main_minus01_button"
@@ -64,8 +72,8 @@
             android:layout_weight="1"/>
 
         <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+            style="@style/AppButton.Primary"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="@string/fragment_main_plus01_label"
             android:id="@+id/fragment_main_plus01_button"
@@ -77,8 +85,8 @@
             android:layout_weight="1"/>
 
         <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+            style="@style/AppButton.Primary"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:text="@string/fragment_main_plus1_label"
             android:id="@+id/fragment_main_plus1_button"
