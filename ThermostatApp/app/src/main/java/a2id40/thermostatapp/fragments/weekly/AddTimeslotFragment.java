@@ -43,7 +43,6 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
     private Date mEndTimeDate;
     private int mStartHour = 0;
     private int mStartMinute = 0;
-    private boolean mHasDayBeenChanged = false;
 
     public static final String ADD_TIMESLOT_SUN_LEFT_BUNDLE = "Add timeslot sun left";
     public static final String ADD_TIMESLOT_TIMEPOINTS_INITIAL_BUNDLE = "Add timepoints initial array";
@@ -87,6 +86,7 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
     private void setupView() {
         setupButtons();
         mEndTimeEditText.setEnabled(false);
+        mSaveButton.setEnabled(false);
         mWeekDayTextView.setText(String.format("Weekly Program: %s", weekDays[mDay]));
     }
 
@@ -108,16 +108,16 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
                     startAndEndTimeToDate(true, hourOfDay, minute);
                     mStartHour = hourOfDay;
                     mStartMinute = minute;
-                    mHasDayBeenChanged = true;
                     enableEndTime();
                 } else {
                     mEndTimeEditText.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
                     startAndEndTimeToDate(false, hourOfDay, minute);
+                    enableSaveButton();
                 }
             }
         }, hour, minute, true);
         mTimePicker.setThemeDark(true);
-        if (!isStart && mHasDayBeenChanged){
+        if (!isStart){
             mTimePicker.setMinTime(new Timepoint(mStartHour, mStartMinute+1));
             mTimePicker.setSelectableTimes(getTimepointArrayAfterChosingStart(mTimepointsEnd));
         } else {
@@ -129,6 +129,8 @@ public class AddTimeslotFragment extends android.support.v4.app.Fragment impleme
     private void enableEndTime(){
         mEndTimeEditText.setEnabled(true);
     }
+
+    private void enableSaveButton(){ mSaveButton.setEnabled(true); }
 
     private Timepoint[] getTimepointArrayAfterChosingStart(Timepoint[] timepointArray){
         ArrayList<Timepoint> initialArrayList = new ArrayList<Timepoint>(Arrays.asList(timepointArray));
