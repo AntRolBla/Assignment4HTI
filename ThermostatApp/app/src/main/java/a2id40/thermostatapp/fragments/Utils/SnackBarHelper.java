@@ -29,4 +29,10 @@ public class SnackBarHelper {
         mSnackbar.show();
     }
 
+    public static void showSuccessMessage(View view, String message) {
+        Snackbar mSnackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+        mSnackbar.getView().setBackgroundColor(ContextCompat.getColor(view.getContext(), R.color.lightGreen));
+        mSnackbar.show();
+    }
+
 }

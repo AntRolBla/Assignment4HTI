@@ -33,4 +33,6 @@
     <string name="fragment_weeklyday_removeDialog_body">You are about to remove a time slot. Are you sure?</string>
     <string name="fragment_weeklyday_removeDialog_ok">OK</string>
     <string name="fragment_weeklyday_removeDialog_cancel">Cancel</string>
+    <string name="fragment_main_vacation_enabled">The vacation mode is now enabled, all temperatures are overridden.</string>
+    <string name="fragment_main_vacation_disabled">The vacation mode is now disabled. \r\nTemperature values are taken from the weekly program.</string>
 </resources>

@@ -108,7 +108,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             public void run() {
                 try {
                     while (!isInterrupted()) {
-                        Thread.sleep(250);
+                        Thread.sleep(5000);
                         act.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -153,10 +153,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     private void setupTexts(){
-        // Delete texts
-        mInfoTextView.setText("");
-        mTemperatureTextView.setText("");
-        // Put new texts
         mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
         mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mTargetTemperature));
     }
@@ -238,9 +234,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     changeTemperaturePositiveButtonsEnable(false);
                     changeTemperatureNegativeButtonsEnable(false);
                     // Pop up messages
-                    Toast.makeText(getContext(), "The vacation mode is now enabled, all temperatures are overridden.",
-                            Toast.LENGTH_SHORT).show();
-
+                    SnackBarHelper.showSuccessMessage(getView(), getString(R.string.fragment_main_vacation_enabled));
                 } else {
                     // Set temperature from weekly (day or night)
                     switchOFFVacationModeOnServer();
@@ -248,8 +242,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     if (mTargetTemperature > MIN_TEMPERATURE){ changeTemperatureNegativeButtonsEnable(true); }
                     if (mTargetTemperature < MAX_TEMPERATURE){ changeTemperaturePositiveButtonsEnable(true); }
                     // Pop up messages
-                    Toast.makeText(getContext(), "The vacation mode is now disabled.", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getContext(), "The temperature values are taken from the weekly program.", Toast.LENGTH_SHORT).show();
+                    SnackBarHelper.showSuccessMessage(getView(), getString(R.string.fragment_main_vacation_disabled));
 
                 }
                 break;
@@ -291,7 +284,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         putTargetTemperature(mTargetTemperature);
 
         // Disable weekly switches on server (PUT)
-        weeklyProgramCallerVacationON();
+        //weeklyProgramCallerVacationON();
         putSwitchWeeklyOnOff();
     }
 
@@ -380,7 +373,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                 if (response.isSuccessful()){
                     mWeekProgramStateModel = response.body();
                     mSwitchState = mWeekProgramStateModel.isWeekProgramOn();
-                    Double a = getTemperatureInRange(mTargetTemperature, 0.0);
                 } else {
                     SnackBarHelper.showErrorSnackBar(getView());
                 }
@@ -514,7 +506,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
     // Switch the weekly on/off PUT
     private void putSwitchWeeklyOnOff (){
-        Call<UpdateResponse> setIsWeekProgramOn = APIClient.getClient().setWeekProgram(mWeekProgramModel);
+        Call<UpdateResponse> setIsWeekProgramOn = APIClient.getClient().setWeekProgramState(new WeekProgramState(mSwitchState));
         ((BaseActivity) getActivity()).showLoadingScreen();
         setIsWeekProgramOn.enqueue(new Callback<UpdateResponse>(){
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
