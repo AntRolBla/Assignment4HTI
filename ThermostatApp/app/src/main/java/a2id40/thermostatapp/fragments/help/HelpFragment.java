@@ -2,14 +2,19 @@ package a2id40.thermostatapp.fragments.help;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.github.aakira.expandablelayout.ExpandableLinearLayout;
+import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
 import a2id40.thermostatapp.R;
 import a2id40.thermostatapp.activities.base.util.ActivityUtils;
@@ -25,9 +30,6 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
 
     //region View Components
 
-    @BindView(R.id.fragment_help_main_info_textview)
-    TextView mHelpMainTextView;
-
     @BindView(R.id.fragment_help_weekly_button)
     Button mHowToWeeklyButton;
 
@@ -36,6 +38,15 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
 
     @BindView(R.id.fragment_help_vacation_button)
     Button mHowToVacationButton;
+
+    @BindView(R.id.fragment_help_weekly_expandable)
+    ExpandableRelativeLayout mWeeklyExpandable;
+
+    @BindView(R.id.fragment_help_temperature_expandable)
+    ExpandableRelativeLayout mTemperatureExpandable;
+
+    @BindView(R.id.fragment_help_vacation_expandable)
+    ExpandableRelativeLayout mVacationExpandable;
 
     //endregion
 
@@ -56,6 +67,34 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
 
     private void setupView() {
         setupButtons();
+        setupExpandables();
+    }
+
+    private void setupExpandables() {
+        mWeeklyExpandable.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mWeeklyExpandable.collapse(-1, null);
+            }
+        });
+        mTemperatureExpandable.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mTemperatureExpandable.collapse(-1, null);
+            }
+        });
+        mVacationExpandable.post(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                mVacationExpandable.collapse(-1, null);
+            }
+        });
     }
 
     private void setupButtons() {
@@ -68,18 +107,25 @@ public class HelpFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.fragment_help_weekly_button:
-                ActivityUtils.replaceFragment(getActivity().getSupportFragmentManager(), HelpFragmentWeekly.newInstance(),
-                        R.id.activity_base_container);
+                updateArrow(mHowToWeeklyButton, !mWeeklyExpandable.isExpanded());
+                mWeeklyExpandable.toggle();
                 break;
             case R.id.fragment_help_temperature_button:
-                ActivityUtils.replaceFragment(getActivity().getSupportFragmentManager(), HelpFragmentTemperature.newInstance(),
-                        R.id.activity_base_container);
+                updateArrow(mHowToTemperatureButton, !mTemperatureExpandable.isExpanded());
+                mTemperatureExpandable.toggle();
                 break;
 
             case R.id.fragment_help_vacation_button:
-                ActivityUtils.replaceFragment(getActivity().getSupportFragmentManager(), HelpFragmentVacation.newInstance(),
-                        R.id.activity_base_container);
+                updateArrow(mHowToVacationButton, !mVacationExpandable.isExpanded());
+                mVacationExpandable.toggle();
                 break;
         }
+    }
+
+    private void updateArrow(Button b, boolean isExpanded) {
+
+        int arrowId = isExpanded ? R.drawable.ic_arrow_up : R.drawable.ic_arrow_down;
+
+        b.setCompoundDrawablesWithIntrinsicBounds(0,0, arrowId, 0);
     }
 }
