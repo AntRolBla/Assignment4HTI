@@ -357,9 +357,9 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     updateButtonsState(mCurrentTemperature);
                     String message;
                     if (mVacationSwitch.isChecked()){
-                        message = String.format("Vacation mode is on.\r\n Temperature will be maintained at %d", mTargetTemperature);
+                        message = String.format("Vacation mode is on.\r\nTemperature will be maintained at %.1f", mTargetTemperature);
                     } else {
-                        message = "Vacation mode is off. Week program will be restored";
+                        message = "Vacation mode is off. \r\nWeek program will be restored";
                     }
                     SnackBarHelper.showSuccessMessage(getView(), message);
                 } else {
