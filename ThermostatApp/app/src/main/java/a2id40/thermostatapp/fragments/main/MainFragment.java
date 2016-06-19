@@ -91,6 +91,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private boolean mShouldWaitToSync = true;
     private boolean mIsSyncActive = false;
     private double mCurrentTargetTemp = 0.0;
+    private Thread mRefreshThread;
 
     // endregion
 
@@ -112,7 +113,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private void setupThread(){
         // Thread for updating the temperature values
         final Activity act = this.getActivity();
-        Thread t = new Thread() {
+        mRefreshThread = new Thread() {
             @Override
             public void run() {
                 try {
@@ -133,7 +134,27 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                 }
             }
         };
-        t.start();
+        mRefreshThread.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mRefreshThread.interrupt();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mRefreshThread.isInterrupted()) {
+            mRefreshThread.start();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mRefreshThread.interrupt();
     }
 
     private void setupData() {
@@ -277,8 +298,10 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
             public void onResponse(Call<TargetTemperatureModel> call, Response<TargetTemperatureModel> response) {
                 if (response.isSuccessful()){
-                    mTargetTemperature = response.body().getTargetTemperature();
-                    onTargetTemperatureUpdated(mTargetTemperature);
+                    if (isAdded()) {
+                        mTargetTemperature = response.body().getTargetTemperature();
+                        onTargetTemperatureUpdated(mTargetTemperature);
+                    }
                 } else {
                     if (isFirstTime){
                         toggleNoConnectionPlaceholder(true);
@@ -302,8 +325,10 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             public void onResponse(Call<TemperatureModel> call, Response<TemperatureModel> response) {
                 //((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
-                    mCurrentTemperature = response.body().getCurrentTemperature();
-                    mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
+                    if (isAdded()) {
+                        mCurrentTemperature = response.body().getCurrentTemperature();
+                        mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
+                    }
                 } else {
                     if (isFirstTime){
                         toggleNoConnectionPlaceholder(true);
@@ -325,8 +350,10 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         callWeeklyOn.enqueue(new Callback<WeekProgramState>() {
             public void onResponse(Call<WeekProgramState> call, Response<WeekProgramState> response) {
                 if (response.isSuccessful()){
-                    mVacationSwitch.setChecked(response.body().isWeekProgramOn());
-                    updateButtonsState(mCurrentTemperature);
+                    if (isAdded()) {
+                        mVacationSwitch.setChecked(response.body().isWeekProgramOn());
+                        updateButtonsState(mCurrentTemperature);
+                    }
                 } else {
                     if (isFirstTime){
                         toggleNoConnectionPlaceholder(true);
