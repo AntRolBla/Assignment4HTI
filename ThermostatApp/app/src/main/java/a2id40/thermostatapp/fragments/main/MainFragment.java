@@ -70,6 +70,15 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     @BindView(R.id.fragment_main_temperature_circle)
     FrameLayout mTempCircle;
 
+    @BindView(R.id.fragment_main_content_container)
+    LinearLayout mContentContainer;
+
+    @BindView(R.id.fragment_main_noconnection)
+    LinearLayout mNoConnectionPlaceholder;
+
+    @BindView(R.id.fragment_main_noconnection_retry)
+    Button mNoConnectionRetryButton;
+
     //endregion
 
     // region Variables declaration
@@ -139,6 +148,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         mPlus01Button.setOnClickListener(this);
         mPlus1Button.setOnClickListener(this);
         mVacationSwitch.setOnClickListener(this);
+        mNoConnectionRetryButton.setOnClickListener(this);
     }
 
     private void updateCircleColor() {
@@ -211,6 +221,24 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             case R.id.fragment_main_vacation_switch:
                 putSwitchWeeklyOnOff();
                 break;
+            case R.id.fragment_main_noconnection_retry:
+                retrySetupData();
+                break;
+        }
+    }
+
+    private void retrySetupData() {
+        toggleNoConnectionPlaceholder(false);
+        setupData();
+    }
+
+    private void toggleNoConnectionPlaceholder(boolean shouldDisplay) {
+        if (shouldDisplay) {
+            mNoConnectionPlaceholder.setVisibility(View.VISIBLE);
+            mContentContainer.setVisibility(View.GONE);
+        } else {
+            mNoConnectionPlaceholder.setVisibility(View.GONE);
+            mContentContainer.setVisibility(View.VISIBLE);
         }
     }
 
@@ -227,14 +255,14 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     onTargetTemperatureUpdated(mTargetTemperature);
                 } else {
                     if (isFirstTime){
-                        // TODO: placeholder sem conexão
+                        toggleNoConnectionPlaceholder(true);
                     }
                 }
             }
 
             public void onFailure(Call<TargetTemperatureModel> call, Throwable t) {
                 if (isFirstTime){
-                    // TODO: placeholder sem conexão
+                    toggleNoConnectionPlaceholder(true);
                 }
             }
         });
@@ -252,14 +280,14 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
                 } else {
                     if (isFirstTime){
-                        // TODO: placeholder sem conexão
+                        toggleNoConnectionPlaceholder(true);
                     }
                 }
             }
 
             public void onFailure(Call<TemperatureModel> call, Throwable t) {
                 if (isFirstTime){
-                    // TODO: placeholder sem conexão
+                    toggleNoConnectionPlaceholder(true);
                 }
             }
         });
@@ -275,14 +303,14 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                     updateButtonsState(mCurrentTemperature);
                 } else {
                     if (isFirstTime){
-                        // TODO: placeholder sem conexão
+                        toggleNoConnectionPlaceholder(true);
                     }
                 }
             }
 
             public void onFailure(Call<WeekProgramState> call, Throwable t) {
                 if (isFirstTime){
-                    // TODO: placeholder sem conexão
+                    toggleNoConnectionPlaceholder(true);
                 }
             }
         });
