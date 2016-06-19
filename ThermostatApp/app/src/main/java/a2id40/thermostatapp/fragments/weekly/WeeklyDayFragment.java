@@ -121,7 +121,6 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
 
             @Override
             public void onFailure(Call<WeekProgramModel> call, Throwable t) {
-                String error = t.getMessage();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 ((BaseActivity) getActivity()).goBackAddCallErrorSnackBar();
             }
@@ -475,6 +474,11 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     setupAddTimeslotButton();
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else { // With error: Undo modification on mWeekProgram using mTimeslotArray
+                    mSwitchesArray = mHelper.convertArrayTimeslotsToArraySwitch(mTimeslotsArray);
+                    mWeekProgramModel = mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, mSwitchesArray);
+                    setNumberOfDaysNightsLeft(mTimeslotsArray);
+                    setupNumberDayNightViewAndButton();
+                    setupAddTimeslotButton();
                     ((BaseActivity) getActivity()).hideLoadingScreen();
                     SnackBarHelper.showErrorOnRemovingTimeslot(getView());
                 }
@@ -483,7 +487,11 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
             // With error: Undo modification on mWeekProgram using mTimeslotArray
             @Override
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                String error = t.getMessage();
+                mSwitchesArray = mHelper.convertArrayTimeslotsToArraySwitch(mTimeslotsArray);
+                mWeekProgramModel = mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, mSwitchesArray);
+                setNumberOfDaysNightsLeft(mTimeslotsArray);
+                setupNumberDayNightViewAndButton();
+                setupAddTimeslotButton();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorOnRemovingTimeslot(getView());
             }
@@ -511,6 +519,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         return builder.create();
     }
 
+
     @Override
     public void removeTimeslotClicked(int position) {
         AlertDialog removeAlert = createRemoveTimeslotDialog(position);
@@ -532,6 +541,7 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
         callUpdateWeekProgramModel.enqueue(new Callback<UpdateResponse>() {
             @Override
             public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
+                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful() && response.body().isSuccess()){
                     mSwitchesArray = mHelper.getSwitchFromWeekDay(mDay, mWeekProgramModel);
                     mTimeslotsArray = mHelper.convertArraySwitchesToArrayTimeslots(mSwitchesArray);
@@ -540,16 +550,23 @@ public class WeeklyDayFragment extends android.support.v4.app.Fragment implement
                     setNumberOfDaysNightsLeft(mTimeslotsArray);
                     setupNumberDayNightViewAndButton();
                     setupAddTimeslotButton();
-                    ((BaseActivity) getActivity()).hideLoadingScreen();
                 } else {
-                    ((BaseActivity) getActivity()).hideLoadingScreen();
+                    mSwitchesArray = mHelper.convertArrayTimeslotsToArraySwitch(mTimeslotsArray);
+                    mWeekProgramModel = mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, mSwitchesArray);
+                    setNumberOfDaysNightsLeft(mTimeslotsArray);
+                    setupNumberDayNightViewAndButton();
+                    setupAddTimeslotButton();
                     SnackBarHelper.showErrorOnAddingTimeslot(getView());
                 }
             }
 
             @Override
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                String error = t.getMessage();
+                mSwitchesArray = mHelper.convertArrayTimeslotsToArraySwitch(mTimeslotsArray);
+                mWeekProgramModel = mHelper.setSwitchFromWeekDay(mDay, mWeekProgramModel, mSwitchesArray);
+                setNumberOfDaysNightsLeft(mTimeslotsArray);
+                setupNumberDayNightViewAndButton();
+                setupAddTimeslotButton();
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorOnAddingTimeslot(getView());
             }

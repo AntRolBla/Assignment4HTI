@@ -8,6 +8,7 @@
     android:paddingRight="16dp"
     android:paddingTop="64dp">
 
+    <include layout="@layout/timeslot_recycler_header_view"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="300dp"
         android:layout_height="200dp"
