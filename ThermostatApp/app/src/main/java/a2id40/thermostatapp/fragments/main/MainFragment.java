@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -87,6 +88,9 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     private double mTargetTemperature = 21.0;
 
     private boolean firstIteration = true;
+    private boolean mShouldWaitToSync = true;
+    private boolean mIsSyncActive = false;
+    private double mCurrentTargetTemp = 0.0;
 
     // endregion
 
@@ -118,7 +122,9 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                             @Override
                             public void run() {
                                 getCurrentTemperature(false);
-                                getTargetTemperature(false);
+                                if (!mIsSyncActive) {
+                                    getTargetTemperature(false);
+                                }
                                 getVacationState(false);
                             }
                         });
@@ -156,7 +162,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         AnimatedColor color = new AnimatedColor(ContextCompat.getColor(getContext(), R.color.lightBlue), ContextCompat.getColor(getContext(), R.color.lightRed));
         int resultColor = color.with((float)value);
         GradientDrawable background = (GradientDrawable) mTempCircle.getBackground();
-        background.setStroke(24, resultColor);
+        background.setStroke(18, resultColor);
     }
 
     private void updateButtonsState(double temperature){
@@ -187,20 +193,40 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     }
 
     private void onTargetTemperatureUpdated(Double temperature){
+        mCurrentTargetTemp = mTargetTemperature;
         mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), temperature));
         updateCircleColor();
         updateButtonsState(temperature);
     }
 
     private void changeTemperature(double amount) {
-        double currentTemperature = mTargetTemperature;
         mTargetTemperature = mTargetTemperature + amount;
         updateButtonsState(mTargetTemperature);
         mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mTargetTemperature));
         updateCircleColor();
 
-        // TODO: timer para chamar putTargetTemperature
-        putTargetTemperature(mTargetTemperature, currentTemperature); // Put target temperature
+        if (mIsSyncActive) {
+            mShouldWaitToSync = true;
+        } else {
+            setUpdateTargetTimer();
+            mIsSyncActive = true;
+        }
+
+    }
+
+    private void setUpdateTargetTimer() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (mShouldWaitToSync) {
+                    setUpdateTargetTimer();
+                    mShouldWaitToSync = false;
+                } else {
+                    putTargetTemperature(mTargetTemperature, mCurrentTargetTemp); // Put target temperature
+                    mIsSyncActive = false;
+                }
+            }
+        }, 2000);
     }
 
     @Override
