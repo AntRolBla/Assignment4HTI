@@ -117,7 +117,7 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             public void run() {
                 try {
                     while (!isInterrupted()) {
-                        Thread.sleep(20000);
+                        Thread.sleep(3000);
                         act.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
