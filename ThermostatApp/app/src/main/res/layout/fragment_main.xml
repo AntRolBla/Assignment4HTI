@@ -1,131 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingBottom="20dp"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:weightSum="1"
-    android:id="@+id/fragment_main_linearlayout">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fragment_main_info_textview"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textSize="26sp"
-        android:singleLine="false"
-        android:text="New text" />
-
-    <FrameLayout
-        android:id="@+id/fragment_main_temperature_circle"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="36dp"
-        android:layout_marginBottom="36dp"
-        android:background="@drawable/main_circle">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="20.1ºC"
-            android:id="@+id/fragment_main_temperature_textview"
-            android:textSize="50sp"
-            android:layout_gravity="center"/>
-    </FrameLayout>
-
-
+    android:paddingTop="@dimen/activity_vertical_margin">
     <LinearLayout
+        android:id="@+id/fragment_main_content_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <Button
-            style="@style/AppButton.Primary"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:text="@string/fragment_main_minus1_label"
-            android:id="@+id/fragment_main_minus1_button"
-            android:clickable="true"
-            android:textSize="17sp"
-            android:enabled="true" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <Button
-            style="@style/AppButton.Primary"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:text="@string/fragment_main_minus01_label"
-            android:id="@+id/fragment_main_minus01_button"
-            android:textSize="17sp"/>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <Button
-            style="@style/AppButton.Primary"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:text="@string/fragment_main_plus01_label"
-            android:id="@+id/fragment_main_plus01_button"
-            android:textSize="17sp"/>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <Button
-            style="@style/AppButton.Primary"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:text="@string/fragment_main_plus1_label"
-            android:id="@+id/fragment_main_plus1_button"
-            android:textSize="17sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.15"></LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.08">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/fragment_main_vacation_textview"
+            android:id="@+id/fragment_main_info_textview"
+            android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="24sp"
-            android:text="Set vacation mode"
-            android:textStyle="bold" />
+            android:textSize="26sp"
+            android:singleLine="false"
+            android:text="New text" />
 
-        <Switch
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:id="@+id/fragment_main_temperature_circle"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="36dp"
+            android:background="@drawable/main_circle">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="20.1ºC"
+                android:id="@+id/fragment_main_temperature_textview"
+                android:textSize="50sp"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/fragment_main_vacation_switch"
+            android:orientation="horizontal">
+            <Button
+                style="@style/AppButton.Primary"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="@string/fragment_main_minus1_label"
+                android:id="@+id/fragment_main_minus1_button"
+                android:clickable="true"
+                android:textSize="17sp"
+                android:enabled="true" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <Button
+                style="@style/AppButton.Primary"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="@string/fragment_main_minus01_label"
+                android:id="@+id/fragment_main_minus01_button"
+                android:textSize="17sp"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <Button
+                style="@style/AppButton.Primary"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="@string/fragment_main_plus01_label"
+                android:id="@+id/fragment_main_plus01_button"
+                android:textSize="17sp"/>
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <Button
+                style="@style/AppButton.Primary"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:text="@string/fragment_main_plus1_label"
+                android:id="@+id/fragment_main_plus1_button"
+                android:textSize="17sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            android:layout_weight="0.36"
-            android:checked="false"
-            android:enabled="true" />
+            android:layout_weight="0.15"></LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.08">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="24sp"
+                android:text="Set vacation mode"
+                android:textStyle="bold" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_main_vacation_switch"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="0.36"
+                android:checked="false"
+                android:enabled="true" />
+        </LinearLayout>
+
     </LinearLayout>
 
+    <include layout="@layout/placeholder_no_connection"/>
 
-</LinearLayout>
+</FrameLayout>

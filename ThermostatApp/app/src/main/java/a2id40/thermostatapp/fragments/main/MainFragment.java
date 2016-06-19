@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -46,9 +47,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
 
     //region View Components
 
-    @BindView(R.id.fragment_main_linearlayout)
-    LinearLayout mMainLinearLayout;
-
     @BindView(R.id.fragment_main_info_textview)
     TextView mInfoTextView;
 
@@ -67,34 +65,32 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
     @BindView(R.id.fragment_main_plus1_button)
     Button mPlus1Button;
 
-    @BindView(R.id.fragment_main_vacation_textview)
-    TextView mVacationTextView;
-
     @BindView(R.id.fragment_main_vacation_switch)
     Switch mVacationSwitch;
 
     @BindView(R.id.fragment_main_temperature_circle)
     FrameLayout mTempCircle;
 
+    @BindView(R.id.fragment_main_content_container)
+    LinearLayout mContentContainer;
+
+    @BindView(R.id.fragment_main_noconnection)
+    LinearLayout mNoConnectionPlaceholder;
+
+    @BindView(R.id.fragment_main_noconnection_retry)
+    Button mNoConnectionRetryButton;
+
     //endregion
 
     // region Variables declaration
 
     private double mCurrentTemperature = 21.0;
-    // The current temp should be updated as it is changed in the server, as well as mInfoTextView
     private double mTargetTemperature = 21.0;
-    // The vacation temp should be taken from the server
-    private double mOnVacationTemperature = 15.0;
-    // The weekly temp should be taken from the server
-    private boolean mSwitchState = false;
-    private double mCurrentNightTemp = 10.0;
-    private boolean firstIteration = true;
 
-    private TemperatureModel mTemperatureModel;
-    private TargetTemperatureModel mTargetTemperatureModel;
-    private WeekProgramState mWeekProgramStateModel;
-    private WeekProgramModel mWeekProgramModel;
-    private NightTemperatureModel mNightTempModel;
+    private boolean firstIteration = true;
+    private boolean mShouldWaitToSync = true;
+    private boolean mIsSyncActive = false;
+    private double mCurrentTargetTemp = 0.0;
 
     // endregion
 
@@ -108,7 +104,12 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         View root  = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, root);
         setupView();
+        setupData();
+        setupThread();
+        return root;
+    }
 
+    private void setupThread(){
         // Thread for updating the temperature values
         final Activity act = this.getActivity();
         Thread t = new Thread() {
@@ -120,16 +121,11 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                         act.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                // Update temperatures and text
-                                currentTemperatureCaller();
-                                targetTemperatureCaller();
-                                setupTexts();
-                                // If just created, update mSwitchState and mVacationSwitch state
-                                if (firstIteration){
-                                    firstIteration = !firstIteration;
-                                    onVacationSwitchCaller();
-                                    switchState();
+                                getCurrentTemperature(false);
+                                if (!mIsSyncActive) {
+                                    getTargetTemperature(false);
                                 }
+                                getVacationState(false);
                             }
                         });
                     }
@@ -138,41 +134,17 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
             }
         };
         t.start();
+    }
 
-        return root;
+    private void setupData() {
+        getCurrentTemperature(true); // Get what current temperature the server has
+        getTargetTemperature(true); // Get what target temperature the server has
+        getVacationState(true); // Get state of vacation
     }
 
     private void setupView() {
         ((BaseActivity)getActivity()).setTitle(R.string.fragment_main_title);
-        setupData();    // Get data from server
         setupButtons(); // Set up buttons listeners
-        switchState();  // Set the switch state
-        setupTexts();   // Set the texts with the data
-    }
-
-    private void setupData(){
-        // Get what current temperature the server has
-        currentTemperatureCaller();
-        // Get what target temperature the server has
-        targetTemperatureCaller();
-        // Get state for the switch, then update mSwitchState variable and call switchState()
-        onVacationSwitchCaller();
-        onVacationSwitchUpdater();
-        setupTexts();
-    }
-
-    private void setupTexts(){
-        mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
-        mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mTargetTemperature));
-        updateCircleColor();
-    }
-
-    private void updateCircleColor() {
-        double value = (mTargetTemperature - MIN_TEMPERATURE) / (MAX_TEMPERATURE - MIN_TEMPERATURE);
-        AnimatedColor color = new AnimatedColor(ContextCompat.getColor(getContext(), R.color.lightBlue), ContextCompat.getColor(getContext(), R.color.lightRed));
-        int resultColor = color.with((float)value);
-        GradientDrawable background = (GradientDrawable) mTempCircle.getBackground();
-        background.setStroke(24, resultColor);
     }
 
     // Setting the listener for the buttons
@@ -182,324 +154,230 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         mPlus01Button.setOnClickListener(this);
         mPlus1Button.setOnClickListener(this);
         mVacationSwitch.setOnClickListener(this);
+        mNoConnectionRetryButton.setOnClickListener(this);
     }
 
-    // Method for getting the switch state at start (ON/OFF)
-    private void switchState(){
-        if (mSwitchState) {
-            mVacationSwitch.setChecked(true);
+    private void updateCircleColor() {
+        double value = (mTargetTemperature - MIN_TEMPERATURE) / (MAX_TEMPERATURE - MIN_TEMPERATURE);
+        AnimatedColor color = new AnimatedColor(ContextCompat.getColor(getContext(), R.color.lightBlue), ContextCompat.getColor(getContext(), R.color.lightRed));
+        int resultColor = color.with((float)value);
+        GradientDrawable background = (GradientDrawable) mTempCircle.getBackground();
+        background.setStroke(18, resultColor);
+    }
+
+    private void updateButtonsState(double temperature){
+        if (mVacationSwitch.isChecked()){
+            mMinus1Button.setEnabled(false);
+            mMinus01Button.setEnabled(false);
+            mPlus01Button.setEnabled(false);
+            mPlus1Button.setEnabled(false);
         } else {
-            mVacationSwitch.setChecked(false);
-       }
+            mMinus1Button.setEnabled(true);
+            mMinus01Button.setEnabled(true);
+            mPlus1Button.setEnabled(true);
+            mPlus01Button.setEnabled(true);
+            if (temperature < MIN_TEMPERATURE + 1){
+                mMinus1Button.setEnabled(false);
+                if (temperature == MIN_TEMPERATURE){
+                    mMinus01Button.setEnabled(false);
+                }
+            } else {
+                if (temperature > MAX_TEMPERATURE - 1){
+                    mPlus1Button.setEnabled(false);
+                    if (temperature == MAX_TEMPERATURE){
+                        mPlus01Button.setEnabled(false);
+                    }
+                }
+            }
+        }
+    }
+
+    private void onTargetTemperatureUpdated(Double temperature){
+        mCurrentTargetTemp = mTargetTemperature;
+        mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), temperature));
+        updateCircleColor();
+        updateButtonsState(temperature);
     }
 
     private void changeTemperature(double amount) {
-        mTargetTemperature = getTemperatureInRange(mTargetTemperature, amount);
-        // Update on screen texts
-        setupTexts();
-        // Update value of current temperature to server every time we change it
-        putTargetTemperature(mTargetTemperature);
-        // Update the current temperature
-        currentTemperatureCaller();
-        // Update on screen texts
-        setupTexts();
+        mTargetTemperature = mTargetTemperature + amount;
+        updateButtonsState(mTargetTemperature);
+        mTemperatureTextView.setText(String.format(getString(R.string.fragment_main_temp_format), mTargetTemperature));
+        updateCircleColor();
+
+        if (mIsSyncActive) {
+            mShouldWaitToSync = true;
+        } else {
+            setUpdateTargetTimer();
+            mIsSyncActive = true;
+        }
+
     }
 
-    private double getTemperatureInRange(double currentTemp, double amount) {
-        currentTemp = currentTemp + amount;
-        if (currentTemp <= MIN_TEMPERATURE) {
-            // Disable negative buttons to prevent user from clicking
-            changeTemperatureNegativeButtonsEnable(false);
-            return MIN_TEMPERATURE;
-        } else if (currentTemp >= MAX_TEMPERATURE) {
-            // Disable positive buttons to prevent user from clicking
-            changeTemperaturePositiveButtonsEnable(false);
-            return MAX_TEMPERATURE;
-        } else {
-            changeTemperatureNegativeButtonsEnable(true);
-            changeTemperaturePositiveButtonsEnable(true);
-            return currentTemp;
-        }
+    private void setUpdateTargetTimer() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (mShouldWaitToSync) {
+                    setUpdateTargetTimer();
+                    mShouldWaitToSync = false;
+                } else {
+                    putTargetTemperature(mTargetTemperature, mCurrentTargetTemp); // Put target temperature
+                    mIsSyncActive = false;
+                }
+            }
+        }, 2000);
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.fragment_main_minus1_button:
-                if (mSwitchState) { changeTemperature(-1.0); }
-                else { onClickButtonsOnVacation(); }
+                changeTemperature(-1.0);
                 break;
             case R.id.fragment_main_minus01_button:
-                if (mSwitchState) { changeTemperature(-0.1); }
-                else { onClickButtonsOnVacation(); }
+                changeTemperature(-0.1);
                 break;
             case R.id.fragment_main_plus01_button:
-                if (mSwitchState) { changeTemperature(0.1); }
-                else { onClickButtonsOnVacation(); }
+                changeTemperature(0.1);
                 break;
             case R.id.fragment_main_plus1_button:
-                if (mSwitchState) { changeTemperature(1.0); }
-                else { onClickButtonsOnVacation(); }
+                changeTemperature(1.0);
                 break;
-            // Switch functionalities
             case R.id.fragment_main_vacation_switch:
-
-                // Act depending on the state of the switch
-                if (mVacationSwitch.isChecked()) {
-                    // Override current temperature, set information to server
-                    switchONVacationModeOnServer();
-                    // Disable all 4 buttons and set the switch state to active
-                    changeTemperaturePositiveButtonsEnable(false);
-                    changeTemperatureNegativeButtonsEnable(false);
-                    // Pop up messages
-                    SnackBarHelper.showSuccessMessage(getView(), getString(R.string.fragment_main_vacation_enabled));
-                } else {
-                    // Set temperature from weekly (day or night)
-                    switchOFFVacationModeOnServer();
-                    // Make available the buttons that can be used and set the switch state to non active
-                    if (mTargetTemperature > MIN_TEMPERATURE){ changeTemperatureNegativeButtonsEnable(true); }
-                    if (mTargetTemperature < MAX_TEMPERATURE){ changeTemperaturePositiveButtonsEnable(true); }
-                    // Pop up messages
-                    SnackBarHelper.showSuccessMessage(getView(), getString(R.string.fragment_main_vacation_disabled));
-
-                }
+                putSwitchWeeklyOnOff();
+                break;
+            case R.id.fragment_main_noconnection_retry:
+                retrySetupData();
                 break;
         }
     }
 
-    private void onClickButtonsOnVacation(){
-        changeTemperatureAllButtonsEnable(false);
-        Toast.makeText(getContext(), "The vacation mode is enabled.", Toast.LENGTH_SHORT).show();
+    private void retrySetupData() {
+        toggleNoConnectionPlaceholder(false);
+        setupData();
     }
 
-    // Auxiliary methods for setting the buttons to enable or disable
-    private void changeTemperaturePositiveButtonsEnable(boolean state){
-        mPlus01Button.setEnabled(state);
-        mPlus1Button.setEnabled(state);
-    }
-
-    private void changeTemperatureNegativeButtonsEnable(boolean state){
-        mMinus1Button.setEnabled(state);
-        mMinus01Button.setEnabled(state);
-    }
-
-    private void changeTemperatureAllButtonsEnable (boolean state){
-        changeTemperaturePositiveButtonsEnable(state);
-        changeTemperatureNegativeButtonsEnable(state);
-    }
-
-    // Method called when the onVacation switch is changed from OFF to ON
-    private void switchONVacationModeOnServer(){
-        // Get onVacation temperature value
-        mOnVacationTemperature = getVacationTemperature();
-
-        // Override target temperature (local)
-        currentTemperatureCaller();
-        mTargetTemperature = mOnVacationTemperature;
-        setupTexts();
-
-        // Override target temperature on sever (PUT)
-        putTargetTemperature(mTargetTemperature);
-
-        // Disable weekly switches on server (PUT)
-        //weeklyProgramCallerVacationON();
-        putSwitchWeeklyOnOff();
-    }
-
-    // Method called when the onVacation switch is changed from ON to OFF
-    private void switchOFFVacationModeOnServer(){
-        // Set weekly back again (PUT)
-        weeklyProgramCallerVacationOFF();
-        putSwitchWeeklyOnOff();
-
-        // Update local value for temperatures
-        targetTemperatureCaller();
-        currentTemperatureCaller();
-        setupTexts();
-    }
-
-    private double getVacationTemperature(){
-        // Get the night temperature at mCurrentNightTemp
-        getNightTemperatureFromServer();
-        // Get the target temperature at mTargetTemperature
-        targetTemperatureCaller();
-        // Compare and set the lowest
-        if (mCurrentNightTemp <= mTargetTemperature){
-            return mCurrentNightTemp;
+    private void toggleNoConnectionPlaceholder(boolean shouldDisplay) {
+        if (shouldDisplay) {
+            mNoConnectionPlaceholder.setVisibility(View.VISIBLE);
+            mContentContainer.setVisibility(View.GONE);
         } else {
-            return mTargetTemperature;
+            mNoConnectionPlaceholder.setVisibility(View.GONE);
+            mContentContainer.setVisibility(View.VISIBLE);
         }
     }
 
-    // Callers as auxiliar methods  ---------------------------------------------------------------- [Callers]
+    // region server GET
+
+    // Target temperature caller
+    private void getTargetTemperature(final boolean isFirstTime){
+        Call<TargetTemperatureModel> getTargetTemp = APIClient.getClient().getTargetTemperature();
+        getTargetTemp.enqueue(new Callback<TargetTemperatureModel>() {
+
+            public void onResponse(Call<TargetTemperatureModel> call, Response<TargetTemperatureModel> response) {
+                if (response.isSuccessful()){
+                    mTargetTemperature = response.body().getTargetTemperature();
+                    onTargetTemperatureUpdated(mTargetTemperature);
+                } else {
+                    if (isFirstTime){
+                        toggleNoConnectionPlaceholder(true);
+                    }
+                }
+            }
+
+            public void onFailure(Call<TargetTemperatureModel> call, Throwable t) {
+                if (isFirstTime){
+                    toggleNoConnectionPlaceholder(true);
+                }
+            }
+        });
+    }
 
     // Current temperature caller
-    private void currentTemperatureCaller(){
+    private void getCurrentTemperature(final boolean isFirstTime){
         Call<TemperatureModel> callTemperatureCurrent = APIClient.getClient().getCurrentTemperature();
-        //((BaseActivity) getActivity()).showLoadingScreen();
         callTemperatureCurrent.enqueue(new Callback<TemperatureModel>() {
 
             public void onResponse(Call<TemperatureModel> call, Response<TemperatureModel> response) {
                 //((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
-                    mTemperatureModel = response.body();
-                    mCurrentTemperature = mTemperatureModel.getCurrentTemperature();
-                    setupTexts();
+                    mCurrentTemperature = response.body().getCurrentTemperature();
+                    mInfoTextView.setText(String.format(getString(R.string.fragment_main_info_format), mCurrentTemperature));
                 } else {
-                    SnackBarHelper.showErrorSnackBar(getView());
+                    if (isFirstTime){
+                        toggleNoConnectionPlaceholder(true);
+                    }
                 }
             }
 
             public void onFailure(Call<TemperatureModel> call, Throwable t) {
-                //((BaseActivity) getActivity()).hideLoadingScreen();
-                SnackBarHelper.showErrorSnackBar(getView());
-            }
-        });
-    }
-
-    // Target temperature caller
-    private void targetTemperatureCaller(){
-        Call<TargetTemperatureModel> callTargetTemperature = APIClient.getClient().getTargetTemperature();
-        //((BaseActivity) getActivity()).showLoadingScreen();
-        callTargetTemperature.enqueue(new Callback<TargetTemperatureModel>() {
-
-            public void onResponse(Call<TargetTemperatureModel> call, Response<TargetTemperatureModel> response) {
-                //((BaseActivity) getActivity()).hideLoadingScreen();
-                if (response.isSuccessful()){
-                    mTargetTemperatureModel = response.body();
-                    mTargetTemperature = mTargetTemperatureModel.getTargetTemperature();
-                    setupTexts();
-                } else {
-                    SnackBarHelper.showErrorSnackBar(getView());
+                if (isFirstTime){
+                    toggleNoConnectionPlaceholder(true);
                 }
-            }
-
-            public void onFailure(Call<TargetTemperatureModel> call, Throwable t) {
-                //((BaseActivity) getActivity()).hideLoadingScreen();
-                SnackBarHelper.showErrorSnackBar(getView());
             }
         });
     }
 
     // On vacation caller
-    private void onVacationSwitchCaller() {
+    private void getVacationState(final boolean isFirstTime) {
         Call<WeekProgramState> callWeeklyOn = APIClient.getClient().getWeekProgramState();
-        ((BaseActivity) getActivity()).showLoadingScreen();
         callWeeklyOn.enqueue(new Callback<WeekProgramState>() {
             public void onResponse(Call<WeekProgramState> call, Response<WeekProgramState> response) {
-                ((BaseActivity) getActivity()).hideLoadingScreen();
                 if (response.isSuccessful()){
-                    mWeekProgramStateModel = response.body();
-                    mSwitchState = mWeekProgramStateModel.isWeekProgramOn();
+                    mVacationSwitch.setChecked(response.body().isWeekProgramOn());
+                    updateButtonsState(mCurrentTemperature);
                 } else {
-                    SnackBarHelper.showErrorSnackBar(getView());
+                    if (isFirstTime){
+                        toggleNoConnectionPlaceholder(true);
+                    }
                 }
             }
 
             public void onFailure(Call<WeekProgramState> call, Throwable t) {
-                ((BaseActivity) getActivity()).hideLoadingScreen();
-                SnackBarHelper.showErrorSnackBar(getView());
-            }
-        });
-    }
-
-    // On vacation switcher updater
-    private void onVacationSwitchUpdater() {
-        // Updates the options of the main page depending on if it is on Weelky or not
-        if (mSwitchState) {
-            // Disable all 4 buttons
-            changeTemperaturePositiveButtonsEnable(false);
-            changeTemperatureNegativeButtonsEnable(false);
-            mVacationSwitch.setChecked(true);
-            // Update on screen texts
-            setupTexts();
-        } else {
-            // Make available the buttons that can be used and set the switch state to non active
-            if (mTargetTemperature > MIN_TEMPERATURE){ changeTemperatureNegativeButtonsEnable(true); }
-            if (mTargetTemperature < MAX_TEMPERATURE){ changeTemperaturePositiveButtonsEnable(true); }
-            mVacationSwitch.setChecked(false);
-            // Update on screen texts
-            setupTexts();
-        }
-    }
-
-    // Weekly program caller ON (state to true)
-    private void weeklyProgramCallerVacationON(){
-        final Call<WeekProgramModel> weekProgramCall = APIClient.getClient().getWeekProgram();
-        // makes the request, can have two responses from server
-        weekProgramCall.enqueue(new Callback<WeekProgramModel>() {
-
-            // has to validate is response is success
-            public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
-                if (response.isSuccessful()){
-                    mWeekProgramModel = response.body();
-                    mWeekProgramModel.getWeekProgram().setIsWeekProgramOn(true);
-                } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
+                if (isFirstTime){
+                    toggleNoConnectionPlaceholder(true);
                 }
             }
-
-            public void onFailure(Call<WeekProgramModel> call, Throwable t) {
-                String error = t.getMessage();
-            }
         });
     }
 
-    // Weekly program caller OFF (state to false)
-    private void weeklyProgramCallerVacationOFF(){
-        final Call<WeekProgramModel> weekProgramCall = APIClient.getClient().getWeekProgram();
-        weekProgramCall.enqueue(new Callback<WeekProgramModel>() {
+    //endregion
 
-            // has to validate is response is success
-            public void onResponse(Call<WeekProgramModel> call, Response<WeekProgramModel> response) {
-                if (response.isSuccessful()) {
-                    mWeekProgramModel = response.body();
-                    mWeekProgramModel.getWeekProgram().setIsWeekProgramOn(false);
-                } else {
-                    try {
-                        String onResponse = response.errorBody().string();
-                    } catch (IOException e){
-                    };
-                }
-            }
+    // region server PUT
 
-            public void onFailure(Call<WeekProgramModel> call, Throwable t) {
-                String error = t.getMessage();
-            }
-        });
-    }
-
-    //Current night temperature caller
-    private void getNightTemperatureFromServer(){
-        Call<NightTemperatureModel> callNightTempModel = APIClient.getClient().getNightTemperature();
+    // Switch the weekly on/off PUT
+    private void putSwitchWeeklyOnOff (){
+        Call<UpdateResponse> setWeekProgramState = APIClient.getClient().setWeekProgramState(new WeekProgramState(mVacationSwitch.isChecked()));
         ((BaseActivity) getActivity()).showLoadingScreen();
-        callNightTempModel.enqueue(new Callback<NightTemperatureModel>() {
-            @Override
-            public void onResponse(Call<NightTemperatureModel> call, Response<NightTemperatureModel> response) {
+        setWeekProgramState.enqueue(new Callback<UpdateResponse>(){
+            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
                 ((BaseActivity) getActivity()).hideLoadingScreen();
-                if (response.isSuccessful()){
-                    mNightTempModel = response.body();
-                    mCurrentNightTemp = mNightTempModel.getNightTemperature();
+                if (response.isSuccessful() && response.body().isSuccess()){
+                    updateButtonsState(mCurrentTemperature);
+                    String message;
+                    if (mVacationSwitch.isChecked()){
+                        message = String.format("Vacation mode is on.\r\nTemperature will be maintained at %.1f", mTargetTemperature);
+                    } else {
+                        message = "Vacation mode is off. \r\nWeek program will be restored";
+                    }
+                    SnackBarHelper.showSuccessMessage(getView(), message);
                 } else {
-                   SnackBarHelper.showErrorSnackBar(getView());
+                    SnackBarHelper.showErrorSnackBar(getView());
+                    mVacationSwitch.toggle();
                 }
             }
 
-            @Override
-            public void onFailure(Call<NightTemperatureModel> call, Throwable t) {
+            public void onFailure(Call<UpdateResponse> call, Throwable t) {
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorSnackBar(getView());
+                mVacationSwitch.toggle();
             }
         });
     }
-
-    // Put as auxiliar methods  -------------------------------------------------------------------- [Putters]
 
     // Target temperature PUT
-    private void putTargetTemperature(Double temperature){
+    private void putTargetTemperature(Double temperature, final Double currentTemperature){
         TargetTemperatureModel targetTempModel = new TargetTemperatureModel(temperature);
         Call<UpdateResponse> setTargetTemperature = APIClient.getClient().setTargetTemperature(targetTempModel);
         ((BaseActivity) getActivity()).showLoadingScreen();
@@ -510,11 +388,13 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
                 if (response.isSuccessful() && response.body().isSuccess()){
                     // If success, do nothing
                 } else {
+                    onTargetTemperatureUpdated(currentTemperature);
                     SnackBarHelper.showErrorSnackBar(getView());
                 }
             }
 
             public void onFailure(Call<UpdateResponse> call, Throwable t) {
+                onTargetTemperatureUpdated(currentTemperature);
                 ((BaseActivity) getActivity()).hideLoadingScreen();
                 SnackBarHelper.showErrorSnackBar(getView());
             }
@@ -522,31 +402,6 @@ public class MainFragment extends android.support.v4.app.Fragment implements Vie
         });
     }
 
-    // Switch the weekly on/off PUT
-    private void putSwitchWeeklyOnOff (){
-        Call<UpdateResponse> setIsWeekProgramOn = APIClient.getClient().setWeekProgramState(new WeekProgramState(mSwitchState));
-        ((BaseActivity) getActivity()).showLoadingScreen();
-        setIsWeekProgramOn.enqueue(new Callback<UpdateResponse>(){
-            public void onResponse(Call<UpdateResponse> call, Response<UpdateResponse> response) {
-                ((BaseActivity) getActivity()).hideLoadingScreen();
-                if (response.isSuccessful() && response.body().isSuccess()){
-                    // If success, do nothing
-                } else {
-                    SnackBarHelper.showErrorSnackBar(getView());
-                }
-            }
-
-            public void onFailure(Call<UpdateResponse> call, Throwable t) {
-                // Thrown always when first accessing the fragment
-                // The first put to the server fails
-                ((BaseActivity) getActivity()).hideLoadingScreen();
-                SnackBarHelper.showErrorSnackBar(getView());
-                // Undo changes
-                mVacationSwitch.toggle();
-                mSwitchState = !mSwitchState;
-            }
-
-        });
-    }
+    //endregion
 
 }
